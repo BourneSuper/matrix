@@ -1,0 +1,5 @@
+* text=auto
+*.c text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.php text eol=lf
