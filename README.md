@@ -16,7 +16,6 @@ What's more, neural network of AI are full of cumputation of matrix , so it can 
 
 ## Install
 1. Generate Makefile
-
 ```SHELL
 cd matrix/
 /usr/local/php/bin/phpize
