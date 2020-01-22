@@ -1,7 +1,7 @@
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 
 # Matrix
-Matrix is a PHP extension. It can do parallel computing based on CUDA.
+Matrix is a PHP extension. It can do parallel computing based on CUDA.<br/>
 Why should we use GPU to do cumputation ? Because it can run 1000+ times faster than CPU when solve a parallel cumputation.<br/>
 What's more, neural network of AI are full of cumputation of matrix , so it can be helpful.
 
@@ -13,7 +13,23 @@ What's more, neural network of AI are full of cumputation of matrix , so it can 
 - PATH environment var
   - cuda //TO DO
   - sample //TO DO
- 
+
+## Install
+1. Generate Makefile
+
+```SHELL
+cd matrix/
+/usr/local/php/bin/phpize
+./configure --with-php-config=/usr/local/php/bin/php-config
+```
+
+2. Modify Makefile <br/>
+  **sh bs_matrix.mk.sh**
+
+3. make and install <br/>
+  **make bs_matrix**
+
+
 ## Usage
 
 **1. Matrix multiply**
