@@ -1,18 +1,31 @@
+/*
+ * Matrix is a PHP extension. It can do parallel computing base on CUDA.
+ *
+ * GitHub: https://github.com/BourneSuper/matrix
+ *
+ * Author: Bourne Wong <cb44606@gmail.com>
+ *
+ * */
+
+
+
+
+
 /* bs_matrix extension for PHP */
 
 #include <stdio.h>
 
 // Utilities and system includes
 #include <assert.h>
-#include <helper_string.h>  // helper for shared functions common to CUDA Samples
+//#include <helper_string.h>  // helper for shared functions common to CUDA Samples
 
 // CUDA runtime
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
 
 // CUDA and CUBLAS functions
-#include <helper_functions.h>
-#include <helper_cuda.h>
+//#include <helper_functions.h>
+//#include <helper_cuda.h>
 
 
 #ifdef HAVE_CONFIG_H
@@ -87,8 +100,73 @@ void util_HashTableTo1DArr( HashTable * hashTableP, double * arrP  ){
 
 }
 
+/**
+ *
+ */
+void util_HashTableTo1DArrS( HashTable * hashTableP, float * arrP  ){
+    int count = 0;
+    zend_long hash;
+    zend_string *key;
+    zval *zvalue;
+    zend_long h;
+    zend_string *k;
+    zval *zv;
+    ZEND_HASH_FOREACH_KEY_VAL( hashTableP, hash, key, zvalue ){
 
-//-------------
+        ZEND_HASH_FOREACH_KEY_VAL( Z_ARRVAL_P(zvalue), h, k, zv ){
+
+            arrP[ count ] = (float)zval_get_double_func(zv);
+
+            count++;
+        }ZEND_HASH_FOREACH_END();
+    } ZEND_HASH_FOREACH_END();
+
+}
+
+/**
+ *
+ */
+void util_HashTableTo1DArrOne( HashTable * hashTableP, double * arrP  ){
+    int count = 0;
+    zend_long hash;
+    zend_string *key;
+    zval *zvalue;
+    ZEND_HASH_FOREACH_KEY_VAL( hashTableP, hash, key, zvalue ){
+        arrP[ count ] = zval_get_double_func(zvalue);
+
+        count++;
+    } ZEND_HASH_FOREACH_END();
+
+}
+
+/**
+ *
+ */
+void util_HashTableTo1DArrOneS( HashTable * hashTableP, float * arrP  ){
+    int count = 0;
+    zend_long hash;
+    zend_string *key;
+    zval *zvalue;
+    ZEND_HASH_FOREACH_KEY_VAL( hashTableP, hash, key, zvalue ){
+        arrP[ count ] = (float)zval_get_double_func(zvalue);
+
+        count++;
+    } ZEND_HASH_FOREACH_END();
+
+}
+
+
+
+
+//----------------------------
+
+#define checkCudaResult(result) ccResult((result), __FILE__, __LINE__)
+void ccResult( cublasStatus_t result, const char *const file, int const line){
+    if( result ){
+        zend_throw_exception_ex( NULL, static_cast<unsigned int>(result), "CUDA error. Code %d (File:%s Line: %d)\n", static_cast<unsigned int>(result), file, line );
+    }
+}
+
 
 /**
  *
@@ -124,7 +202,8 @@ PHP_METHOD(MatrixTool, __construct){
 
     cublasHandleStruct * cublasHandleStructP = ( cublasHandleStruct * )ecalloc( 1, sizeof(cublasHandleStruct) );
     cublasHandle_t handle;
-    cublasCreate(&handle);
+
+    checkCudaResult( cublasCreate(&handle) );
     cublasHandleStructP->handle = handle;
 
     cublasHandleResourceP  = zend_register_resource( cublasHandleStructP, handleResourceNum );
@@ -176,7 +255,7 @@ PHP_METHOD(MatrixTool, getHandle){
 
 
 
-//multiply
+//multiply()
 ZEND_BEGIN_ARG_INFO_EX( MatrixTool_multiply_ArgInfo, 0, 0, 2)
     ZEND_ARG_ARRAY_INFO( 1, matrixAP, 0 )
     ZEND_ARG_ARRAY_INFO( 1, matrixBP, 0 )
@@ -296,7 +375,7 @@ PHP_METHOD(MatrixTool, multiply){
         zval tempZval; array_init_size( &tempZval, widthB );
         for( int tempJ = 0; tempJ < widthB; tempJ++ ){
 
-            add_next_index_double( &tempZval, hostCP[tempI * widthB + tempJ ]);
+            add_next_index_double( &tempZval, hostCP[ tempI * widthB + tempJ ]);
         }
 
         add_next_index_zval( &returnZval, &tempZval );
@@ -317,12 +396,482 @@ PHP_METHOD(MatrixTool, multiply){
 }
 
 
+//multiplyS()
+ZEND_BEGIN_ARG_INFO_EX( MatrixTool_multiplyS_ArgInfo, 0, 0, 2)
+    ZEND_ARG_ARRAY_INFO( 1, matrixAP, 0 )
+    ZEND_ARG_ARRAY_INFO( 1, matrixBP, 0 )
+    ZEND_ARG_ARRAY_INFO( 1, matrixCP, 1 )
+    ZEND_ARG_INFO( 0, alpha )
+    ZEND_ARG_INFO( 0, beta )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD(MatrixTool, multiplyS){
+    zval * matrixAP = NULL;
+    zval * matrixBP = NULL;
+    zval * matrixCP = NULL;
+    float alpha; double alphaTemp = 1.0;
+    float beta; double betaTemp = 0.0;
+
+    ZEND_PARSE_PARAMETERS_START(2, 5)
+        Z_PARAM_ARRAY_EX( matrixAP, 0, 1 )
+        Z_PARAM_ARRAY_EX( matrixBP, 0, 1 )
+        Z_PARAM_OPTIONAL
+        Z_PARAM_ARRAY_EX( matrixCP, 0, 1 )
+        Z_PARAM_DOUBLE(alphaTemp)
+        Z_PARAM_DOUBLE(betaTemp)
+    ZEND_PARSE_PARAMETERS_END();
+
+    alpha = (float)alphaTemp;
+    beta = (float)betaTemp;
+
+    HashTable * hashTableAP = Z_ARRVAL_P(matrixAP);
+    int heightA = zend_hash_num_elements(hashTableAP);
+    int widthA = zend_hash_num_elements( Z_ARRVAL( (hashTableAP->arData)->val ) );
+
+    HashTable * hashTableBP = Z_ARRVAL_P(matrixBP);
+    int heightB = zend_hash_num_elements(hashTableBP);
+    int widthB = zend_hash_num_elements( Z_ARRVAL( (hashTableBP->arData)->val ) );
+
+    HashTable * hashTableCP = NULL;
+    int heightC = 0;
+    int widthC = 0;
+    if( matrixCP != NULL ){
+        hashTableCP = Z_ARRVAL_P(matrixCP);
+        heightC = zend_hash_num_elements(hashTableCP);
+        widthC = zend_hash_num_elements( Z_ARRVAL( (hashTableCP->arData)->val ) );
+
+        if( heightC != heightA ){
+            zend_throw_exception_ex(NULL, 2001, "the height of martrixA( %d, %d ) can not match with the height of matrixC( %d, %d )", heightA, widthA, heightC, widthC );
+        }
+
+        if( widthC != widthB ){
+            zend_throw_exception_ex(NULL, 2002, "the width of martrixB( %d, %d ) can not match with the width of widthC( %d, %d )", heightB, widthB, heightC, widthC  );
+        }
+
+    }
+
+    if( widthA !=  heightB ){
+        zend_throw_exception_ex(NULL, 2000, "the width of martrixA( %d, %d ) can not match with the height of matrixB( %d, %d )", heightA, widthA, heightB, widthB );
+    }
+
+    float * hostAP = ( float * )malloc( heightA * widthA * sizeof(float) );
+    float * hostBP = ( float * )malloc( heightB * widthB * sizeof(float) );
+    float * hostCP = ( float * )malloc( heightA * widthB * sizeof(float) );
+
+    util_HashTableTo1DArrS( hashTableAP, hostAP );
+    util_HashTableTo1DArrS( hashTableBP, hostBP );
+    if( hashTableCP != NULL ){
+        util_HashTableTo1DArrS( hashTableCP, hostCP );
+    }
+
+//    dev_printMatrix( hostAP, heightA, widthA );
+//    dev_printMatrix( hostBP, heightB, widthB );
+
+    //
+    float * deviceAP, * deviceBP, * deviceCP;
+    cudaMalloc( (void**)&deviceAP, heightA * widthA * sizeof(float) );
+    cudaMalloc( (void**)&deviceBP, heightB * widthB * sizeof(float) );
+    cudaMalloc( (void**)&deviceCP, heightA * widthB * sizeof(float) );
+
+    //
+    cudaMemcpy(deviceAP, hostAP, heightA * widthA * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(deviceBP, hostBP, heightB * widthB * sizeof(float), cudaMemcpyHostToDevice);
+    if( hashTableCP != NULL ){
+        cudaMemcpy(deviceCP, hostCP, heightC * widthC * sizeof(float), cudaMemcpyHostToDevice);
+    }
+
+    //
+    zval *obj = getThis();
+    zval *tempZVal;
+    zval *cublasHandleP = zend_read_property(MatrixTool_ce, obj, "cublasHandle", sizeof("cublasHandle") - 1, 1, tempZVal TSRMLS_CC);
+    cublasHandleStruct * cudaHandleStructP = (cublasHandleStruct *)zend_fetch_resource(Z_RES_P(cublasHandleP), "handleResourceName", handleResourceNum);
+
+    cudaEvent_t stop;
+    cudaEventCreate(&stop);
+
+
+    cublasSgemm(cudaHandleStructP->handle,
+            CUBLAS_OP_N, CUBLAS_OP_N,
+            widthB, heightA, widthA,
+            &alpha,
+            deviceBP, widthB,
+            deviceAP, widthA,
+            &beta,
+            deviceCP, widthB
+    );
+
+    cudaEventSynchronize(stop);
+
+    cudaMemcpy(hostCP, deviceCP, heightA * widthB * sizeof(float), cudaMemcpyDeviceToHost);
+
+
+//    dev_printMatrix(hostCP, heightA, widthB);
+
+
+    //
+    zval returnZval; array_init_size( &returnZval, heightA );
+
+    for( int tempI = 0; tempI < heightA; tempI++ ){
+
+        zval tempZval; array_init_size( &tempZval, widthB );
+        for( int tempJ = 0; tempJ < widthB; tempJ++ ){
+
+            add_next_index_double( &tempZval, hostCP[ tempI * widthB + tempJ ]);
+        }
+
+        add_next_index_zval( &returnZval, &tempZval );
+    }
+
+    RETVAL_ZVAL( &returnZval, 1, 1 );
+
+    //
+    free(hostAP);
+    free(hostBP);
+    free(hostCP);
+    cudaFree(deviceAP);
+    cudaFree(deviceBP);
+    cudaFree(deviceCP);
+
+    return ;
+
+}
+
+
+
+//dot()
+ZEND_BEGIN_ARG_INFO_EX( MatrixTool_dot_ArgInfo, 0, 0, 2)
+    ZEND_ARG_ARRAY_INFO( 1, oneDimensionArrAP, 0 )
+    ZEND_ARG_ARRAY_INFO( 1, oneDimensionArrBP, 0 )
+    ZEND_ARG_INFO( 0, strideA )
+    ZEND_ARG_INFO( 0, strideB )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD(MatrixTool, dot){
+    zval * oneDimensionArrAP = NULL;
+    zval * oneDimensionArrBP = NULL;
+    zend_long strideA = 1;
+    zend_long strideB = 1;
+
+
+    ZEND_PARSE_PARAMETERS_START(2, 4)
+        Z_PARAM_ARRAY_EX( oneDimensionArrAP, 0, 1 )
+        Z_PARAM_ARRAY_EX( oneDimensionArrBP, 0, 1 )
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(strideA)
+        Z_PARAM_LONG(strideB)
+    ZEND_PARSE_PARAMETERS_END();
+
+    HashTable * hashTableAP = Z_ARRVAL_P(oneDimensionArrAP);
+    int elementNumA = zend_hash_num_elements(hashTableAP);
+
+    HashTable * hashTableBP = Z_ARRVAL_P(oneDimensionArrBP);
+    int elementNumB = zend_hash_num_elements(hashTableBP);
+
+    //
+    double * hostAP = ( double * )malloc( elementNumA * sizeof(double) );
+    double * hostBP = ( double * )malloc( elementNumB * sizeof(double) );
+    double * hostCP = ( double * )malloc( 1 * sizeof(double) );
+
+    util_HashTableTo1DArrOne( hashTableAP, hostAP );
+    util_HashTableTo1DArrOne( hashTableBP, hostBP );
+
+    //
+    double * deviceAP, * deviceBP, * deviceCP;
+    cudaMalloc( (void**)&deviceAP, elementNumA * sizeof(double) );
+    cudaMalloc( (void**)&deviceBP, elementNumB * sizeof(double) );
+    cudaMalloc( (void**)&deviceCP, 1 * sizeof(double) );
+
+    //
+    cudaMemcpy(deviceAP, hostAP, elementNumA * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(deviceBP, hostBP, elementNumB * sizeof(double), cudaMemcpyHostToDevice);
+
+    //
+    zval *obj = getThis();
+    zval *tempZVal;
+    zval *cublasHandleP = zend_read_property(MatrixTool_ce, obj, "cublasHandle", sizeof("cublasHandle") - 1, 1, tempZVal TSRMLS_CC);
+    cublasHandleStruct * cudaHandleStructP = (cublasHandleStruct *)zend_fetch_resource(Z_RES_P(cublasHandleP), "handleResourceName", handleResourceNum);
+
+    cudaEvent_t stop;
+    cudaEventCreate(&stop);
+
+
+//    const double alpha = 1.0;
+//    const double beta = 0.0;
+    cublasDdot(cudaHandleStructP->handle,
+            elementNumA,
+            deviceAP, strideA,
+            deviceBP, strideB,
+            deviceCP
+    );
+
+    cudaEventSynchronize(stop);
+
+    cudaMemcpy(hostCP, deviceCP, 1 * sizeof(double), cudaMemcpyDeviceToHost);
+
+
+    RETVAL_DOUBLE( *hostCP );
+
+    //
+    free(hostAP);
+    free(hostBP);
+    free(hostCP);
+    cudaFree(deviceAP);
+    cudaFree(deviceBP);
+    cudaFree(deviceCP);
+
+    return ;
+
+}
+
+
+
+//dotS()
+ZEND_BEGIN_ARG_INFO_EX( MatrixTool_dotS_ArgInfo, 0, 0, 2)
+    ZEND_ARG_ARRAY_INFO( 1, oneDimensionArrAP, 0 )
+    ZEND_ARG_ARRAY_INFO( 1, oneDimensionArrBP, 0 )
+    ZEND_ARG_INFO( 0, strideA )
+    ZEND_ARG_INFO( 0, strideB )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD(MatrixTool, dotS){
+    zval * oneDimensionArrAP = NULL;
+    zval * oneDimensionArrBP = NULL;
+    zend_long strideA = 1;
+    zend_long strideB = 1;
+
+
+    ZEND_PARSE_PARAMETERS_START(2, 4)
+        Z_PARAM_ARRAY_EX( oneDimensionArrAP, 0, 1 )
+        Z_PARAM_ARRAY_EX( oneDimensionArrBP, 0, 1 )
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(strideA)
+        Z_PARAM_LONG(strideB)
+    ZEND_PARSE_PARAMETERS_END();
+
+    HashTable * hashTableAP = Z_ARRVAL_P(oneDimensionArrAP);
+    int elementNumA = zend_hash_num_elements(hashTableAP);
+
+    HashTable * hashTableBP = Z_ARRVAL_P(oneDimensionArrBP);
+    int elementNumB = zend_hash_num_elements(hashTableBP);
+
+    //
+    float * hostAP = ( float * )malloc( elementNumA * sizeof(float) );
+    float * hostBP = ( float * )malloc( elementNumB * sizeof(float) );
+    float * hostCP = ( float * )malloc( 1 * sizeof(float) );
+
+    util_HashTableTo1DArrOneS( hashTableAP, hostAP );
+    util_HashTableTo1DArrOneS( hashTableBP, hostBP );
+
+    //
+    float * deviceAP, * deviceBP, * deviceCP;
+    cudaMalloc( (void**)&deviceAP, elementNumA * sizeof(float) );
+    cudaMalloc( (void**)&deviceBP, elementNumB * sizeof(float) );
+    cudaMalloc( (void**)&deviceCP, 1 * sizeof(float) );
+
+    //
+    cudaMemcpy(deviceAP, hostAP, elementNumA * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(deviceBP, hostBP, elementNumB * sizeof(float), cudaMemcpyHostToDevice);
+
+    //
+    zval *obj = getThis();
+    zval *tempZVal;
+    zval *cublasHandleP = zend_read_property(MatrixTool_ce, obj, "cublasHandle", sizeof("cublasHandle") - 1, 1, tempZVal TSRMLS_CC);
+    cublasHandleStruct * cudaHandleStructP = (cublasHandleStruct *)zend_fetch_resource(Z_RES_P(cublasHandleP), "handleResourceName", handleResourceNum);
+
+    cudaEvent_t stop;
+    cudaEventCreate(&stop);
+
+
+//    const double alpha = 1.0;
+//    const double beta = 0.0;
+    cublasSdot(cudaHandleStructP->handle,
+            elementNumA,
+            deviceAP, strideA,
+            deviceBP, strideB,
+            deviceCP
+    );
+
+    cudaEventSynchronize(stop);
+
+    cudaMemcpy(hostCP, deviceCP, 1 * sizeof(float), cudaMemcpyDeviceToHost);
+
+    RETVAL_DOUBLE( *hostCP );
+
+    //
+    free(hostAP);
+    free(hostBP);
+    free(hostCP);
+    cudaFree(deviceAP);
+    cudaFree(deviceBP);
+    cudaFree(deviceCP);
+
+    return ;
+
+}
+
+
+
+//scal()
+ZEND_BEGIN_ARG_INFO_EX( MatrixTool_scal_ArgInfo, 0, 0, 2)
+    ZEND_ARG_INFO( 0, alpha )
+    ZEND_ARG_ARRAY_INFO( 1, oneDimensionArrAP, 0 )
+    ZEND_ARG_INFO( 0, increase )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD(MatrixTool, scal){
+    double alpha = 1.0;
+    zval * oneDimensionArrAP = NULL;
+    zend_long increase = 1;
+
+
+    ZEND_PARSE_PARAMETERS_START(2, 3)
+        Z_PARAM_DOUBLE(alpha)
+        Z_PARAM_ARRAY_EX( oneDimensionArrAP, 0, 1 )
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(increase)
+    ZEND_PARSE_PARAMETERS_END();
+
+    HashTable * hashTableAP = Z_ARRVAL_P(oneDimensionArrAP);
+    int elementNumA = zend_hash_num_elements(hashTableAP);
+
+    //
+    double * hostAP = ( double * )malloc( elementNumA * sizeof(double) );
+
+    util_HashTableTo1DArrOne( hashTableAP, hostAP );
+
+    //
+    double * deviceAP;
+    cudaMalloc( (void**)&deviceAP, elementNumA * sizeof(double) );
+
+    //
+    cudaMemcpy(deviceAP, hostAP, elementNumA * sizeof(double), cudaMemcpyHostToDevice);
+
+    //
+    zval *obj = getThis();
+    zval *tempZVal;
+    zval *cublasHandleP = zend_read_property(MatrixTool_ce, obj, "cublasHandle", sizeof("cublasHandle") - 1, 1, tempZVal TSRMLS_CC);
+    cublasHandleStruct * cudaHandleStructP = (cublasHandleStruct *)zend_fetch_resource(Z_RES_P(cublasHandleP), "handleResourceName", handleResourceNum);
+
+    cudaEvent_t stop;
+    cudaEventCreate(&stop);
+
+
+//    const double alpha = 1.0;
+//    const double beta = 0.0;
+    cublasDscal(cudaHandleStructP->handle,
+            elementNumA,
+            &alpha, deviceAP, increase
+    );
+
+    cudaEventSynchronize(stop);
+
+    cudaMemcpy(hostAP, deviceAP, elementNumA * sizeof(double), cudaMemcpyDeviceToHost);
+
+    //
+    zval returnZval; array_init_size( &returnZval, elementNumA );
+
+    for( int tempI = 0; tempI < elementNumA; tempI++ ){
+        add_next_index_double( &returnZval, hostAP[ tempI ]);
+    }
+
+    RETVAL_ZVAL( &returnZval, 1, 1 );
+
+    //
+    free(hostAP);
+    cudaFree(deviceAP);
+
+    return ;
+
+}
+
+
+//scalS()
+ZEND_BEGIN_ARG_INFO_EX( MatrixTool_scalS_ArgInfo, 0, 0, 2)
+    ZEND_ARG_INFO( 0, alpha )
+    ZEND_ARG_ARRAY_INFO( 1, oneDimensionArrAP, 0 )
+    ZEND_ARG_INFO( 0, increase )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD(MatrixTool, scalS){
+    float alpha; double alphaTemp = 1.0;
+    zval * oneDimensionArrAP = NULL;
+    zend_long increase = 1;
+
+
+    ZEND_PARSE_PARAMETERS_START(2, 3)
+        Z_PARAM_DOUBLE(alphaTemp)
+        Z_PARAM_ARRAY_EX( oneDimensionArrAP, 0, 1 )
+        Z_PARAM_OPTIONAL
+        Z_PARAM_LONG(increase)
+    ZEND_PARSE_PARAMETERS_END();
+
+    alpha = (float)alphaTemp;
+
+    HashTable * hashTableAP = Z_ARRVAL_P(oneDimensionArrAP);
+    int elementNumA = zend_hash_num_elements(hashTableAP);
+
+    //
+    float * hostAP = ( float * )malloc( elementNumA * sizeof(float) );
+
+    util_HashTableTo1DArrOneS( hashTableAP, hostAP );
+
+    //
+    float * deviceAP;
+    cudaMalloc( (float**)&deviceAP, elementNumA * sizeof(float) );
+
+    //
+    cudaMemcpy(deviceAP, hostAP, elementNumA * sizeof(float), cudaMemcpyHostToDevice);
+
+    //
+    zval *obj = getThis();
+    zval *tempZVal;
+    zval *cublasHandleP = zend_read_property(MatrixTool_ce, obj, "cublasHandle", sizeof("cublasHandle") - 1, 1, tempZVal TSRMLS_CC);
+    cublasHandleStruct * cudaHandleStructP = (cublasHandleStruct *)zend_fetch_resource(Z_RES_P(cublasHandleP), "handleResourceName", handleResourceNum);
+
+    cudaEvent_t stop;
+    cudaEventCreate(&stop);
+
+
+//    const double alpha = 1.0;
+//    const double beta = 0.0;
+    cublasSscal(cudaHandleStructP->handle,
+            elementNumA,
+            &alpha, deviceAP, increase
+    );
+
+    cudaEventSynchronize(stop);
+
+    cudaMemcpy(hostAP, deviceAP, elementNumA * sizeof(float), cudaMemcpyDeviceToHost);
+
+    //
+    zval returnZval; array_init_size( &returnZval, elementNumA );
+
+    for( int tempI = 0; tempI < elementNumA; tempI++ ){
+        add_next_index_double( &returnZval, hostAP[ tempI ]);
+    }
+
+    RETVAL_ZVAL( &returnZval, 1, 1 );
+
+    //
+    free(hostAP);
+    cudaFree(deviceAP);
+
+    return ;
+
+}
+
+
 //
 const zend_function_entry MatrixTool_functions[] = {
     PHP_ME(MatrixTool, __construct, MatrixTool_construct_ArgInfo, ZEND_ACC_PUBLIC)
-    PHP_ME(MatrixTool, multiply, MatrixTool_multiply_ArgInfo, ZEND_ACC_PUBLIC)
     PHP_ME(MatrixTool, getHandle, MatrixTool_getHandle_ArgInfo, ZEND_ACC_PUBLIC)
     PHP_ME(MatrixTool, setHandle, MatrixTool_setHandle_ArgInfo, ZEND_ACC_PUBLIC)
+    PHP_ME(MatrixTool, multiply, MatrixTool_multiply_ArgInfo, ZEND_ACC_PUBLIC)
+    PHP_ME(MatrixTool, multiplyS, MatrixTool_multiplyS_ArgInfo, ZEND_ACC_PUBLIC)
+    PHP_ME(MatrixTool, dot, MatrixTool_dot_ArgInfo, ZEND_ACC_PUBLIC)
+    PHP_ME(MatrixTool, dotS, MatrixTool_dotS_ArgInfo, ZEND_ACC_PUBLIC)
+    PHP_ME(MatrixTool, scal, MatrixTool_scal_ArgInfo, ZEND_ACC_PUBLIC)
+    PHP_ME(MatrixTool, scalS, MatrixTool_scalS_ArgInfo, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
@@ -485,3 +1034,16 @@ ZEND_TSRMLS_CACHE_DEFINE()
 ZEND_GET_MODULE(bs_matrix)
 #endif
 
+
+
+
+
+
+/*
+ * Matrix is a PHP extension. It can do parallel computing base on CUDA.
+ *
+ * GitHub: https://github.com/BourneSuper/matrix
+ *
+ * Author: Bourne Wong <cb44606@gmail.com>
+ *
+ * */

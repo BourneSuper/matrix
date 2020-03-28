@@ -1,3 +1,14 @@
+/*
+ * Matrix is a PHP extension. It can do parallel computing base on CUDA.
+ *
+ * GitHub: https://github.com/BourneSuper/matrix
+ *
+ * Author: Bourne Wong <cb44606@gmail.com>
+ *
+ * */
+
+
+
 //class BS.Util
 
 
@@ -104,3 +115,16 @@ zend_function_entry Util_functions[] = {
 //}
 
 
+
+
+
+
+
+/*
+ * Matrix is a PHP extension. It can do parallel computing base on CUDA.
+ *
+ * GitHub: https://github.com/BourneSuper/matrix
+ *
+ * Author: Bourne Wong <cb44606@gmail.com>
+ *
+ * */

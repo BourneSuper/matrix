@@ -1,3 +1,14 @@
+/*
+ * Matrix is a PHP extension. It can do parallel computing base on CUDA.
+ *
+ * GitHub: https://github.com/BourneSuper/matrix
+ *
+ * Author: Bourne Wong <cb44606@gmail.com>
+ *
+ * */
+
+
+
 /* bs_matrix extension for PHP */
 
 #ifndef PHP_BS_MATRIX_H
@@ -23,3 +34,14 @@ PHP_METHOD(Util, cudaGetDeviceCount);
 PHP_METHOD(Util, getDeviceNameById);
 
 
+
+
+
+/*
+ * Matrix is a PHP extension. It can do parallel computing base on CUDA.
+ *
+ * GitHub: https://github.com/BourneSuper/matrix
+ *
+ * Author: Bourne Wong <cb44606@gmail.com>
+ *
+ * */

@@ -1,4 +1,12 @@
-/* bs_matrix extension for PHP */
+/*
+ * Matrix is a PHP extension. It can do parallel computing base on CUDA.
+ *
+ * GitHub: https://github.com/BourneSuper/matrix
+ *
+ * Author: Bourne Wong <cb44606@gmail.com>
+ *
+ * */
+
 
 #ifndef PHP_BS_MATRIX_H
 # define PHP_BS_MATRIX_H
@@ -22,5 +30,22 @@ PHP_METHOD(MatrixTool, __construct);
 PHP_METHOD(MatrixTool, setHandle);
 PHP_METHOD(MatrixTool, getHandle);
 PHP_METHOD(MatrixTool, multiply);
+PHP_METHOD(MatrixTool, multiplyS);
+PHP_METHOD(MatrixTool, dot);
+PHP_METHOD(MatrixTool, dotS);
+PHP_METHOD(MatrixTool, scal);
+PHP_METHOD(MatrixTool, scalS);
 
 
+
+
+
+
+/*
+ * Matrix is a PHP extension. It can do parallel computing base on CUDA.
+ *
+ * GitHub: https://github.com/BourneSuper/matrix
+ *
+ * Author: Bourne Wong <cb44606@gmail.com>
+ *
+ * */

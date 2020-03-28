@@ -1,5 +1,15 @@
 #!/bin/sh
 
+###########################################################################
+#                                                                         #
+# Matrix is a PHP extension. It can do parallel computing base on CUDA.   #
+#                                                                         #
+# GitHub: https://github.com/BourneSuper/matrix                           #
+#                                                                         #
+# Author: Bourne Wong <cb44606@gmail.com>                                 #
+#                                                                         #
+###########################################################################
+
 echo "bs_matrix.mk.sh  running...";
 
 ##
