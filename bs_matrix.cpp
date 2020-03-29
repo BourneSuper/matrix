@@ -160,12 +160,6 @@ void util_HashTableTo1DArrOneS( HashTable * hashTableP, float * arrP  ){
 
 //----------------------------
 
-#define checkCudaResult(result) ccResult((result), __FILE__, __LINE__)
-void ccResult( cublasStatus_t result, const char *const file, int const line){
-    if( result ){
-        zend_throw_exception_ex( NULL, static_cast<unsigned int>(result), "CUDA error. Code %d (File:%s Line: %d)\n", static_cast<unsigned int>(result), file, line );
-    }
-}
 
 
 /**

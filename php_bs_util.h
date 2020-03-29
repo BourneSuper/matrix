@@ -26,6 +26,17 @@ ZEND_TSRMLS_CACHE_EXTERN()
 #endif  /* PHP_BS_MATRIX_H */
 
 
+#ifndef PHP_BS_UTIL_H
+# define PHP_BS_UTIL_H
+
+static void ccResult( int result, const char *const file, int const line){
+    if( result ){
+        zend_throw_exception_ex( NULL, result, "CUDA error. Code %d (File:%s Line: %d)\n", static_cast<unsigned int>(result), file, line );
+    }
+}
+# define checkCudaResult(result) ccResult((result), __FILE__, __LINE__)
+
+#endif
 
 PHP_FUNCTION(initArrayBySize);
 

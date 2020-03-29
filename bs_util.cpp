@@ -67,7 +67,7 @@ ZEND_END_ARG_INFO()
 
 PHP_METHOD(Util, cudaGetDeviceCount){
     int deviceCount = 0;
-    cudaGetDeviceCount(&deviceCount);
+    checkCudaResult( cudaGetDeviceCount(&deviceCount) );
 
     RETURN_LONG(deviceCount);
 }
@@ -85,9 +85,9 @@ PHP_METHOD(Util, getDeviceNameById){
         Z_PARAM_LONG(deviceId)
     ZEND_PARSE_PARAMETERS_END();
 
-    cudaSetDevice( (int)deviceId );
+    checkCudaResult( cudaSetDevice( (int)deviceId ) );
     cudaDeviceProp deviceProp;
-    checkCudaErrors( cudaGetDeviceProperties( &deviceProp, (int)deviceId ) );
+    checkCudaResult( cudaGetDeviceProperties( &deviceProp, (int)deviceId ) );
 
     RETURN_STRING(deviceProp.name);
 
