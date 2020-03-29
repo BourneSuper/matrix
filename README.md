@@ -56,7 +56,9 @@ printf("CUDA device id: %d, name: %s \n", $deviceId, Util::getDeviceNameById($de
 $arr = Util::initArrayBySize($width); //this can slightly improve performce when access, insert or update an array
 ?>
 ```
-**want more? Please see [_bs_matrix_ide_helper.php](https://github.com/BourneSuper/matrix/blob/master/_bs_matrix_ide_helper.php "_bs_matrix_ide_helper.php"). 
+
+**Want More?** <br/>
+Please see [_bs_matrix_ide_helper.php](https://github.com/BourneSuper/matrix/blob/master/_bs_matrix_ide_helper.php "_bs_matrix_ide_helper.php"). 
 
 ## Help with test
 install composer first,then
