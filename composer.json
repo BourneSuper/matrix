@@ -1,0 +1,12 @@
+{
+	"name" : "bs/matrix",
+	"authors" : [{
+			"name" : "BourneSuper",
+			"email" : "bourne_w@sina.com"
+		}
+	],
+	"require-dev" : {
+		"sebastian/version" : "2.0.1",
+		"phpunit/phpunit" : "8.0.0"
+	}
+}
