@@ -12,7 +12,6 @@ What's more, neural network of AI are full of cumputation of matrix , so it can 
 - [PHP](https://www.php.net/) version >= 7.0
 - PATH environment var
   - cuda //TO DO
-  - sample //TO DO
 
 ## Install
 1. Generate Makefile
@@ -56,6 +55,14 @@ printf("CUDA device id: %d, name: %s \n", $deviceId, Util::getDeviceNameById($de
 <?php
 $arr = Util::initArrayBySize($width); //this can slightly improve performce when access, insert or update an array
 ?>
+```
+**want more? Please see [_bs_matrix_ide_helper.php](https://github.com/BourneSuper/matrix/blob/master/_bs_matrix_ide_helper.php "_bs_matrix_ide_helper.php"). 
+
+## Help with test
+install composer first,then
+```shell
+composer install
+sh unit_tests/runTest.sh 
 ```
 
 ## LISENSE
