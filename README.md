@@ -10,8 +10,6 @@ What's more, neural network of AI are full of cumputation of matrix , so it can 
 - [CUDA-enabled GPU](https://developer.nvidia.com/cuda-gpus)
 - [CUDA Toolkit](https://docs.nvidia.com/cuda/index.html)
 - [PHP](https://www.php.net/) version >= 7.0
-- PATH environment var
-  - cuda //TO DO
 
 ## Install
 1. Generate Makefile
