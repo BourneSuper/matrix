@@ -8,7 +8,7 @@
  *
  * */
 
-namespace BS;
+namespace BS\matrix;
 
 
 function sameElementArr($height, $width, $value){

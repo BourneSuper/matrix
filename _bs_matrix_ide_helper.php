@@ -1,5 +1,5 @@
 <?php
-namespace BS;
+namespace BS\matrix;
 
 class Util{
     

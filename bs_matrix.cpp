@@ -877,7 +877,7 @@ PHP_MINIT_FUNCTION(bs_matrix){
     //
     zend_class_entry temp_MatrixTool_ce;
 
-    INIT_NS_CLASS_ENTRY(temp_MatrixTool_ce, "BS", "MatrixTool", MatrixTool_functions);
+    INIT_NS_CLASS_ENTRY(temp_MatrixTool_ce, "BS\\matrix", "MatrixTool", MatrixTool_functions);
     MatrixTool_ce = zend_register_internal_class(&temp_MatrixTool_ce TSRMLS_CC);
 
     handleResourceNum = zend_register_list_destructors_ex(handleResourceDescontructor, NULL, "handleResourceName", module_number);
@@ -886,7 +886,7 @@ PHP_MINIT_FUNCTION(bs_matrix){
 
     //
     zend_class_entry temp_Util_ce;
-    INIT_NS_CLASS_ENTRY(temp_Util_ce, "BS", "Util", Util_functions);
+    INIT_NS_CLASS_ENTRY(temp_Util_ce, "BS\\matrix", "Util", Util_functions);
 
     Util_ce = zend_register_internal_class(&temp_Util_ce TSRMLS_CC);
 
