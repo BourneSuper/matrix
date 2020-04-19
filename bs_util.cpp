@@ -16,15 +16,15 @@
 
 // Utilities and system includes
 #include <assert.h>
-#include <helper_string.h>  // helper for shared functions common to CUDA Samples
+//#include <helper_string.h>  // helper for shared functions common to CUDA Samples
 
 // CUDA runtime
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
 
 // CUDA and CUBLAS functions
-#include <helper_functions.h>
-#include <helper_cuda.h>
+//#include <helper_functions.h>
+//#include <helper_cuda.h>
 
 
 #ifdef HAVE_CONFIG_H
