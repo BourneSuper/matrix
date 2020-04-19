@@ -35,6 +35,12 @@ PHP_METHOD(MatrixTool, dot);
 PHP_METHOD(MatrixTool, dotS);
 PHP_METHOD(MatrixTool, scal);
 PHP_METHOD(MatrixTool, scalS);
+PHP_METHOD(MatrixTool, amax);
+PHP_METHOD(MatrixTool, amaxS);
+PHP_METHOD(MatrixTool, amin);
+PHP_METHOD(MatrixTool, aminS);
+PHP_METHOD(MatrixTool, axpy);
+PHP_METHOD(MatrixTool, axpyS);
 
 
 

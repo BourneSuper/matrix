@@ -101,8 +101,9 @@ class MatrixTool{
      * @param int $strideA
      * @param int $strideB
      * @return double 
+     * @throws \Exception
      */
-    public function dot( $oneDimensionArrA, $oneDimensionArrB, $strideA = 1, $strideB =1 ){}
+    public function dot( $oneDimensionArrA, $oneDimensionArrB, $strideA = 1, $strideB = 1 ){}
     
     /**
      * This function computes the dot product of vectors $oneDimensionArrA and $oneDimensionArrB
@@ -119,38 +120,113 @@ class MatrixTool{
      * @param int $strideA
      * @param int $strideB
      * @return float 
+     * @throws \Exception
      */
-    public function dotS( $oneDimensionArrA, $oneDimensionArrB, $strideA = 1, $strideB =1 ){}
+    public function dotS( $oneDimensionArrA, $oneDimensionArrB, $strideA = 1, $strideB = 1 ){}
     
     /**
-     * This function scales the vector $oneDimensionArrAP multiply the scalar $alpha 
+     * This function scales the vector $oneDimensionArrA multiply the scalar $alpha 
      * 
-     *  $result[ j ] = $alpha * $oneDimensionArrAP [ j ] 
+     *  $result[ j ] = $alpha * $oneDimensionArrA [ j ] 
      *      for i = 1 , … , n 
      *          and j = 1 + ( i - 1 ) *  $increase 
      *  
      * @param double $alpha
-     * @param array $oneDimensionArrAP one dimension array within double type number
+     * @param array $oneDimensionArrA one dimension array within double type number
      * @param int $increase
      * @return array one dimension array within double type number
+     * @throws \Exception
      */
-    public function scal( $alpha, $oneDimensionArrAP, $increase = 1 ){}
+    public function scal( $alpha, $oneDimensionArrA, $increase = 1 ){}
     
     /**
-     * This function scales the vector $oneDimensionArrAP multiply the scalar $alpha 
+     * This function scales the vector $oneDimensionArrA multiply the scalar $alpha 
      * 
-     *  $result[ j ] = $alpha * $oneDimensionArrAP [ j ] 
+     *  $result[ j ] = $alpha * $oneDimensionArrA [ j ] 
      *      for i = 1 , … , n 
      *          and j = 1 + ( i - 1 ) *  $increase 
      *  
      *  @see MatrixTool::scal()
      *  
      * @param float $alpha
-     * @param array $oneDimensionArrAP one dimension array within <b>float</b> type number
+     * @param array $oneDimensionArrA one dimension array within <b>float</b> type number
      * @param int $increase
      * @return array one dimension array within <b>float</b> type number
+     * @throws \Exception
      */
-    public function scalS( $alpha, $oneDimensionArrAP, $increase = 1 ){}
+    public function scalS( $alpha, $oneDimensionArrA, $increase = 1 ){}
+    
+    /**
+     * This function finds the (smallest) index of the element of the maximum absolute value
+     *      for i = 1 , … , n 
+     *          and j = 1 + ( i - 1 ) *  $increase 
+     * @param array $oneDimensionArrA one dimension array within double type number
+     * @param int $increase only $increase ==1 is supported, something wrong with CUDA 
+     * @return int return the index of the element of the maximum value. The first index of an array is 0.
+     * @throws \Exception
+     */
+    public function amax( $oneDimensionArrA, $increase = 1 ){}
+    
+    /**
+     * This function finds the (smallest) index of the element of the maximum value
+     *      for i = 1 , … , n 
+     *          and j = 1 + ( i - 1 ) *  $increase 
+     * @param array $oneDimensionArrA one dimension array within <b>float</b> type number
+     * @param int $increase only $increase ==1 is supported, something wrong with CUDA 
+     * @return int return the index of the element of the maximum value. The first index of an array is 0.
+     * @throws \Exception
+     */
+    public function amaxS( $oneDimensionArrA, $increase = 1 ){}
+    
+    /**
+     * This function finds the (smallest) index of the element of the minimum absolute value
+     *      for i = 1 , … , n 
+     *          and j = 1 + ( i - 1 ) *  $increase 
+     * @param array $oneDimensionArrA one dimension array within double type number
+     * @param int $increase only $increase ==1 is supported, something wrong with CUDA 
+     * @return int return the index of the element of the minimum value. The first index of an array is 0.
+     * @throws \Exception
+     */
+    public function amin( $oneDimensionArrA, $increase = 1 ){}
+    
+    /**
+     * This function finds the (smallest) index of the element of the minimum absolute value
+     *      for i = 1 , … , n 
+     *          and j = 1 + ( i - 1 ) *  $increase 
+     * @param array $oneDimensionArrA one dimension array within <b>float</b> type number
+     * @param int $increase only $increase ==1 is supported, something wrong with CUDA 
+     * @return int return the index of the element of the minimum value. The first index of an array is 0.
+     * @throws \Exception
+     */
+    public function aminS( $oneDimensionArrA, $increase = 1 ){}
+    
+    /**
+     * This function multiplies the vector $oneDimensionArrA by the scalar $alpha and adds it to the vector $oneDimensionArrB
+     *      $alpha * $oneDimensionArrA + $oneDimensionArrB
+     * @param array $oneDimensionArrA one dimension array within double type number
+     * @param array $oneDimensionArrB one dimension array within double type number
+     * @param double $alpha
+     * @param int $strideA
+     * @param int $strideB
+     * @return array one dimension array within double type number
+     * @throws \Exception
+     */
+    public function axpy( $oneDimensionArrA, $oneDimensionArrB, $alpha = 1.0, $strideA = 1, $strideB = 1 ){}
+    
+    /**
+     * This function multiplies the vector $oneDimensionArrA by the scalar $alpha and adds it to the vector $oneDimensionArrB
+     *      $alpha * $oneDimensionArrA + $oneDimensionArrB
+     * @param array $oneDimensionArrA one dimension array within <b>float</b>  type number
+     * @param array $oneDimensionArrB one dimension array within <b>float</b>  type number
+     * @param float $alpha
+     * @param int $strideA
+     * @param int $strideB
+     * @return array one dimension array within <b>float</b>  type number
+     * @throws \Exception
+     */
+    public function axpyS( $oneDimensionArrA, $oneDimensionArrB, $alpha = 1.0, $strideA = 1, $strideB = 1 ){}
+    
+    
     
     
     

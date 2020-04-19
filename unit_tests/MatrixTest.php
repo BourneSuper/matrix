@@ -1,5 +1,5 @@
 <?php
-namespace BS;
+namespace BS\matrix;
 
 include_once __DIR__ . '/../vendor/autoload.php';
 
@@ -191,6 +191,120 @@ class MatrixTest extends TestCase {
         $this->assertEquals( round( 2 * 2.1, 2 ), round( $resArr[1], 2 ) );
         $this->assertEquals( round( 3 * 2.1, 2 ), round( $resArr[2], 2 ) );
         $this->assertEquals( round( 4 * 2.1, 2 ), round( $resArr[3], 2 ) );
+        
+    }
+    
+    /**
+     * @depends testMatrixToolConstructor
+     */
+    public function testAmax( MatrixTool $matrixTool ){
+        
+        $oneDimensionArrA = [ 1.0, 2.0, 3.0, 44.0, 5.0 ];
+        $res = $matrixTool->amax($oneDimensionArrA);
+        $this->assertEquals(3, $res);
+        
+        $oneDimensionArrA = [ 1.0, -2.0, 3.0, -44.0, 5.0 ];
+        $res = $matrixTool->amax($oneDimensionArrA);
+        $this->assertEquals(3, $res);
+        
+//         $oneDimensionArrA = [ 1.0, 2.0, 3.0, 4.0, 5.0 ];
+//         $res = $matrixTool->amax( $oneDimensionArrA, 2 );//something wrong with CUDA
+//         $this->assertEquals(4, $res);
+        
+    }
+    
+    /**
+     * @depends testMatrixToolConstructor
+     */
+    public function testAmaxS( MatrixTool $matrixTool ){
+        
+        $oneDimensionArrA = [ 1.0, 2.0, 3.0, 44.0, 5.0 ];
+        $res = $matrixTool->amaxS($oneDimensionArrA);
+        $this->assertEquals( 3, $res );
+        
+        $oneDimensionArrA = [ 1.0, -2.0, 3.0, -44.0, 5.0 ];
+        $res = $matrixTool->amaxS($oneDimensionArrA);
+        $this->assertEquals( 3, $res );
+        
+//         $oneDimensionArrA = [ 1.0, 2.0, 3.0, 4.0, 5.0 ];
+//         $res = $matrixTool->amaxS( $oneDimensionArrA, 2 );//something wrong with CUDA
+//         $this->assertEquals( 4, $res );
+        
+    }
+    
+    /**
+     * @depends testMatrixToolConstructor
+     */
+    public function testAmin( MatrixTool $matrixTool ){
+        
+        $oneDimensionArrA = [ 1.0, 2.0, 3.0, 0.04, 5.0 ];
+        $res = $matrixTool->amin($oneDimensionArrA);
+        $this->assertEquals( 3, $res );
+        
+        $oneDimensionArrA = [ 1.0, -2.0, 3.0, -0.04, 5.0 ];
+        $res = $matrixTool->amin($oneDimensionArrA);
+        $this->assertEquals( 3, $res );
+        
+//         $oneDimensionArrA = [ 1.0, 2.0, 3.0, 0.04, 0.04 ];
+//         $res = $matrixTool->amin( $oneDimensionArrA, 2 );//something wrong with CUDA
+//         $this->assertEquals( 4, $res );
+        
+    }
+    
+    /**
+     * @depends testMatrixToolConstructor
+     */
+    public function testAminS( MatrixTool $matrixTool ){
+        
+        $oneDimensionArrA = [ 1.0, 2.0, 3.0, 0.04, 5.0 ];
+        $res = $matrixTool->aminS($oneDimensionArrA);
+        $this->assertEquals( 3, $res );
+        
+        $oneDimensionArrA = [ 1.0, -2.0, 3.0, -0.04, 5.0 ];
+        $res = $matrixTool->aminS($oneDimensionArrA);
+        $this->assertEquals( 3, $res );
+        
+//         $oneDimensionArrA = [ 1.0, 2.0, 0.03];
+//         $res = $matrixTool->aminS( $oneDimensionArrA, 2);//something wrong with CUDA
+//         $this->assertEquals( 2, $res );
+        
+    }
+    
+    /**
+     * @depends testMatrixToolConstructor
+     */
+    public function testAxpy( MatrixTool $matrixTool ){
+        
+        $oneDimensionArrA = [ 1.0, 2.0, 3.0, 4.0, 5.0 ];
+        $oneDimensionArrB = [ 6.0, 7.0, 8.0, 9.0, 10.0 ];
+        $resArr = $matrixTool->axpy( $oneDimensionArrA, $oneDimensionArrB );
+        $this->assertEquals( [ 7.0, 9.0, 11.0, 13.0, 15.0 ], $resArr );
+        
+        $resArr = $matrixTool->axpy( $oneDimensionArrA, $oneDimensionArrB, 2.1, 1, 1 );
+        $this->assertEquals( [ 8.1, 11.2, 14.3, 17.4, 20.5  ], $resArr );
+        
+        $resArr = $matrixTool->axpy( $oneDimensionArrA, $oneDimensionArrB, 2.1, 2, 2 );
+        $this->assertEquals( [ 8.1, 7.0, 14.3, 9.0, 20.5  ], $resArr );
+        
+    }
+    
+    /**
+     * @depends testMatrixToolConstructor
+     */
+    public function testAxpyS( MatrixTool $matrixTool ){
+        
+        $oneDimensionArrA = [ 1.0, 2.0, 3.0, 4.0, 5.0 ];
+        $oneDimensionArrB = [ 6.0, 7.0, 8.0, 9.0, 10.0 ];
+        $resArr = $matrixTool->axpyS( $oneDimensionArrA, $oneDimensionArrB );
+        $this->assertEquals( [ 7.0, 9.0, 11.0, 13.0, 15.0 ], $resArr );
+        
+        $resArr = $matrixTool->axpyS( $oneDimensionArrA, $oneDimensionArrB, 2.1, 1, 1 );
+        $resArr = array_map(function($value){return round( $value, 1 );}, $resArr);
+        $this->assertEquals( [ 8.1, 11.2, 14.3, 17.4, 20.5  ], $resArr );
+        
+        $resArr = $matrixTool->axpyS( $oneDimensionArrA, $oneDimensionArrB, 2.1, 2, 2 );
+        $resArr = array_map(function($value){return round( $value, 1 );}, $resArr);
+        $this->assertEquals( [ 8.1, 7.0, 14.3, 9.0, 20.5  ], $resArr );
         
     }
     
