@@ -41,6 +41,8 @@ PHP_METHOD(MatrixTool, amin);
 PHP_METHOD(MatrixTool, aminS);
 PHP_METHOD(MatrixTool, axpy);
 PHP_METHOD(MatrixTool, axpyS);
+PHP_METHOD(MatrixTool, gemv);
+PHP_METHOD(MatrixTool, gemvS);
 
 
 

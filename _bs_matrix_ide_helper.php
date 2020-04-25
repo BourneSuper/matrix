@@ -24,7 +24,7 @@ class Util{
 }
 
 
-class MatrixTool{
+class BLAS{
     
     /**
      * @var resource cublasHandle_t
@@ -226,7 +226,33 @@ class MatrixTool{
      */
     public function axpyS( $oneDimensionArrA, $oneDimensionArrB, $alpha = 1.0, $strideA = 1, $strideB = 1 ){}
     
+    /**
+     * This function performs the matrix-vector multiplication.The vector is column vector.
+     *      $oneDimensionArrY = $alpha * $matrixArrA * $oneDimensionArrX + $beta * $oneDimensionArrY
+     * 
+     * @param array $matrixArrA two dimension array within double type number
+     * @param array $oneDimensionArrX one dimension array within double type number
+     * @param array $oneDimensionArrY one dimension array within double type number
+     * @param double $alpha
+     * @param double $beta
+     * @param int $increaseX
+     * @param int $increaseY
+     */
+    public function gemv( $matrixArrA, $oneDimensionArrX, $oneDimensionArrY = [], $alpha = 1.0, $beta = 1.0, $strideX = 1, $strideY = 1 ){}
     
+    /**
+     * This function performs the matrix-vector multiplication.The vector is column vector.
+     *      $oneDimensionArrY = $alpha * $matrixArrA * $oneDimensionArrX + $beta * $oneDimensionArrY
+     * 
+     * @param array $matrixArrA two dimension array within double type number
+     * @param array $oneDimensionArrX one dimension array within <b>float</b> type number
+     * @param array $oneDimensionArrY one dimension array within <b>float</b> type number
+     * @param float $alpha
+     * @param float $beta
+     * @param int $increaseX
+     * @param int $increaseY
+     */
+    public function gemvS( $matrixArrA, $oneDimensionArrX, $oneDimensionArrY = [], $alpha = 1.0, $beta = 1.0, $strideX = 1, $strideY = 1 ){}
     
     
     
