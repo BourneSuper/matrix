@@ -91,7 +91,7 @@ for( $i = 0; $i < $totalLoopNum; $i++ ){
 $cpuConsumeTime = microtime(true) - $startTime;
 
 try {
-    $matrixTool = new MatrixTool();
+    $BLAS = new BLAS();
 } catch (\Exception $e) {
     echo $e->getMessage();
     die();
@@ -99,15 +99,15 @@ try {
 
 
 
-$handle = $matrixTool->getHandle();
-$matrixTool->setHandle($handle);
+$handle = $BLAS->getHandle();
+$BLAS->setHandle($handle);
 
 $gpuCalculatedArr = [];
 $startTime = microtime(true);
 for( $i = 0; $i < $totalLoopNum; $i++ ){
-    $gpuCalculatedArr = $matrixTool->multiply( $a, $b );
-//     $gpuCalculatedArr = $matrixTool->multiply( $a, $b, $c, 1.0, 0.0 );
-//     $gpuCalculatedArr = $matrixTool->multiplyS( $a, $b );
+    $gpuCalculatedArr = $BLAS->multiply( $a, $b );
+//     $gpuCalculatedArr = $BLAS->multiply( $a, $b, $c, 1.0, 0.0 );
+//     $gpuCalculatedArr = $BLAS->multiplyS( $a, $b );
 }
 $gpuConsumeTime = microtime(true) - $startTime;
 
@@ -125,15 +125,15 @@ printf("GPU total consume time: %fs, one loop time: %fs, C(2,3) = %f \n", $gpuCo
 //
 $arrA = [1.1,2,3,4,5];
 $arrB = [5,4,3,2,1];
-$res = $matrixTool->dot( $arrA, $arrB );
-// $res = $matrixTool->dotS( $arrA, $arrB );
+$res = $BLAS->dot( $arrA, $arrB );
+// $res = $BLAS->dotS( $arrA, $arrB );
 var_dump($res);
 
 
 //
 $arrA = [1.1,2,3,4];
-$res = $matrixTool->scal( 5.0, $arrA );
-// $res = $matrixTool->scalS( 5.0, $arrA );
+$res = $BLAS->scal( 5.0, $arrA );
+// $res = $BLAS->scalS( 5.0, $arrA );
 var_dump($res);
 
 
