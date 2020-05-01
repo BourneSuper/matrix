@@ -2,8 +2,8 @@
 
 # Matrix
 Matrix is a PHP extension. It can do parallel computing based on CUDA.<br/>
-Why should we use GPU to do cumputation ? Because it can run 1000+ times faster than CPU when solve a parallel cumputation.<br/>
-What's more, neural network of AI are full of cumputation of matrix , so it can be helpful.
+Why should we use GPU to do cumputation ? Because it can run 1000+ times faster than CPU when solve a parallel computation.<br/>
+What's more, neural network of AI are full of computation of matrix , so it can be helpful.
 
 ## Requirement
 
