@@ -37,6 +37,7 @@
 #include "ext/standard/info.h"
 #include "php_bs_matrix.h"
 #include "php_bs_util.h"
+#include "php_bs_math.h"
 
 /* For compatibility with older PHP versions */
 #ifndef ZEND_PARSE_PARAMETERS_NONE
@@ -59,8 +60,12 @@ typedef struct {
 zend_class_entry * BLAS_ce;
 extern zend_class_entry * Util_ce;
 extern zend_function_entry Util_functions[];
+extern zend_class_entry * Math_ce;
+extern zend_function_entry Math_functions[];
 
 static int handleResourceNum;
+
+
 
 
 /**
@@ -205,7 +210,7 @@ PHP_METHOD(BLAS, __construct){
     //
     zval cudaHandle;
     ZVAL_RES( &cudaHandle, cublasHandleResourceP );
-    zend_update_property(BLAS_ce, getThis( ), "cublasHandle", sizeof("cublasHandle") - 1, &cudaHandle );
+    zend_update_property( BLAS_ce, getThis( ), "cublasHandle", sizeof("cublasHandle") - 1, &cudaHandle );
 
 
 }
@@ -224,7 +229,7 @@ PHP_METHOD(BLAS, setHandle){
         Z_PARAM_RESOURCE(cublasHandleP)
     ZEND_PARSE_PARAMETERS_END();
 
-    zend_update_property(BLAS_ce, getThis( ), "cublasHandle", sizeof("cublasHandle") - 1, cublasHandleP );
+    zend_update_property( BLAS_ce, getThis( ), "cublasHandle", sizeof("cublasHandle") - 1, cublasHandleP );
 
 }
 
@@ -786,7 +791,7 @@ PHP_METHOD(BLAS, scal){
     zval returnZval; array_init_size( &returnZval, elementNumA );
 
     for( int tempI = 0; tempI < elementNumA; tempI++ ){
-        add_next_index_double( &returnZval, hostAP[ tempI ]);
+        add_next_index_double( &returnZval, hostAP[ tempI ] );
     }
 
     RETVAL_ZVAL( &returnZval, 1, 1 );
@@ -1648,6 +1653,12 @@ PHP_MINIT_FUNCTION(bs_matrix){
 
     Util_ce = zend_register_internal_class(&temp_Util_ce TSRMLS_CC);
 
+    //
+    zend_class_entry temp_Math_ce;
+    INIT_NS_CLASS_ENTRY(temp_Math_ce, "BS\\matrix", "Math", Math_functions);
+
+    Math_ce = zend_register_internal_class(&temp_Math_ce TSRMLS_CC);
+    zend_declare_property_long( Math_ce, "DEVICE_ID", sizeof("DEVICE_ID") - 1, 0, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC TSRMLS_CC );
 
     return SUCCESS;
 }

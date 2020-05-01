@@ -1,4 +1,4 @@
-[![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
+[![](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 
 # Matrix
 Matrix is a PHP extension. It can do parallel computing based on CUDA.<br/>
@@ -33,25 +33,43 @@ cd matrix/
 <?php
 $matrixA = [ [ 1, 2 ][ 3, 4 ][ 5, 6 ] ]; //A(3,2)
 $matrixB = [ [ 7, 8, 9, 0 ][ 1, 2, 3, 4 ] ]; //B(2, 4)
-$matrixTool = new BS\MatrixTool();
+$matrixTool = new BS\matrix\BLAS();
 $gpuCalculatedArr = $matrixTool->multiply( $matrixA, $matrixB ); //A(3,2) x B(2, 4)
-var_dump($gpuCalculatedArr);
+var_dump( $gpuCalculatedArr );
 ?>
 ```
-**2. Get GPU's name**
+**2. Hadamard product**
+```php
+<?php
+$arrA = [
+    [ 1, 2, 3 ],
+    [ 4, 5, 6 ],
+];
+
+$arrB = [
+    [ 2, 2, 2 ],
+    [ 2, 2, 2 ],
+];
+
+$gpuCalculatedArr = BS\matrix\Math::hadamardProduct( $arrA, $arrB );
+var_dump( $gpuCalculatedArr );
+?>
+```
+
+**3. Get GPU's name**
 ```php
 <?php
 $deviceCount = Util::cudaGetDeviceCount();
-printf("CUDA device count: %d \n", $deviceCount );
+printf( "CUDA device count: %d \n", $deviceCount );
 
 $deviceId = $deviceCount - 1;
-printf("CUDA device id: %d, name: %s \n", $deviceId, Util::getDeviceNameById($deviceId) );
+printf( "CUDA device id: %d, name: %s \n", $deviceId, Util::getDeviceNameById($deviceId) );
 ?>
 ```
-**3. Create and init an array with certain size**
+**4. Create and init an array with certain capacity**
 ```php
 <?php
-$arr = Util::initArrayBySize($width); //this can slightly improve performce when access, insert or update an array
+$arr = Util::initArrayBySize( $capacity ); //this can slightly improve performce when access, insert or update an array
 ?>
 ```
 

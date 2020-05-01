@@ -260,5 +260,81 @@ class BLAS{
 }
 
 
+class Math{
+    public static $DEVICE_ID;
+    
+    /**
+     * getter
+     * @return int
+     */
+    public static function getDeviceId(){}
+    
+    /**
+     * setter
+     * @param int $deviceId
+     */
+    public static function setDeviceId( $deviceId ){}
+    
+    /**
+     * add $alpaha on each element of $arrA.
+     * @param array $arr 1 or more dimension array within double type number
+     * @param double $alpha
+     */
+    public static function arrayAdd( $arrA, $alpha){}
+    
+    //TODO basic operation
+    public static function subtractArray( $numX, $arrA ){}
+    
+    //TODO basic operation
+    public static function arrayMultiply( $arrA, $alpha){}
+    
+    //TODO basic operation
+    public static function divideArray( $numX, $arrA ){}
+    
+    //TODO basic operation
+    public static function arrayPower( $arrA, $alpha){}
+    
+    //TODO basic operation
+    public static function arraySquareRoot( $arrA, $alpha){}
+    
+    //TODO basic operation
+    public static function arrayCubeRoot( $arrA, $alpha){}
+    
+    //TODO basic operation
+    public static function logEArray( $arrA ){}
+    
+    //TODO basic operation
+    public static function log2Array( $arrA ){}
+    
+    //TODO basic operation
+    public static function log10Array( $arrA ){}
+    
+
+    //-------------------
+    
+    /**
+     * This functin caculate hadamard product.
+     * result = $matrixA * $matrixB <br/>
+     * [ [ 1, 2, 3], [ 4, 5, 6 ] ] * [ [ 1, 1, 1], [ 2, 2, 2 ] ]
+     * = [ [ 1, 2, 3], [ 8, 10, 12 ] ]
+     * 
+     * @param array $matrixA two dimension array within double type number
+     * @param array $matrixB two dimension array within double type number
+     * @return array two dimension array within double type number
+     */
+    public static function hadamardProduct( $matrixA, $matrixB ){}
+    
+    //TODO advanced operation
+    public static function transpose( $arrA ){}
+    
+    
+    
+    
+    
+    
+    
+}
+
+
 
 ?>
