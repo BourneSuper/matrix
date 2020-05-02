@@ -33,8 +33,8 @@ cd matrix/
 <?php
 $matrixA = [ [ 1, 2 ][ 3, 4 ][ 5, 6 ] ]; //A(3,2)
 $matrixB = [ [ 7, 8, 9, 0 ][ 1, 2, 3, 4 ] ]; //B(2, 4)
-$matrixTool = new BS\matrix\BLAS();
-$gpuCalculatedArr = $matrixTool->multiply( $matrixA, $matrixB ); //A(3,2) x B(2, 4)
+$blas = new BS\matrix\BLAS();
+$gpuCalculatedArr = $blas->multiply( $matrixA, $matrixB ); //A(3,2) x B(2, 4)
 var_dump( $gpuCalculatedArr );
 ?>
 ```
