@@ -24,6 +24,8 @@ cd matrix/
 
 3. make and install <br/>
   **make bs_matrix**
+  
+4. (optional)copy the file **_bs_matrix_ide_helper.php** to your IDE directory
 
 
 ## Usage
