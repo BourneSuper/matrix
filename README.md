@@ -34,9 +34,9 @@ cd matrix/
 ```php
 <?php
 function randomArr( $height, $width ){
-    $arr = Util::initArrayBySize($height);
+    $arr = BS\matrix\Util::initArrayBySize($height);
     for($i = 0 ; $i < $height; $i++){
-        $tempArr = Util::initArrayBySize($width);
+        $tempArr = BS\matrix\Util::initArrayBySize($width);
         for ($j = 0 ; $j < $width; $j++){
             $tempArr[] = rand(1,1000) + rand(1,1000) / 1000 ;
         }
@@ -48,9 +48,12 @@ function randomArr( $height, $width ){
 
 $matrixA = randomArr( 640, 480 ); //A( 640, 480 )
 $matrixB = randomArr( 480, 320 ); //B( 480, 320 )
+
 $blas = new BS\matrix\BLAS();
 $gpuCalculatedArr = $blas->multiply( $matrixA, $matrixB ); //A( 640, 480 ) x B( 480, 320 ) , 1000+ times faster than CPU computation
+
 var_dump( $gpuCalculatedArr );//gpuCalculatedArr(640, 320)
+
 ?>
 ```
 **2. Hadamard product**
