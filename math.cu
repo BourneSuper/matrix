@@ -27,7 +27,7 @@ int getMaxThreadsPerMultiProcessor(  deviceContextStruct * deviceContextStructP 
 
 
 //arrayAdd()
-__global__ void arrayAddKernel( double *deviceA, int alpha, int elementNum ){
+__global__ void arrayAddKernel( double *deviceA, double alpha, int elementNum ){
     int i = blockDim.x * blockIdx.x + threadIdx.x;
 
     if( i < elementNum) {
@@ -50,6 +50,40 @@ void arrayAdd( deviceContextStruct * deviceContextStructP, double * hostAP, int 
     int blocksPerGrid = ( elementNum + threadsPerBlock - 1 ) / threadsPerBlock;
     
     arrayAddKernel<<< blocksPerGrid, threadsPerBlock >>>( deviceA, alpha, elementNum );
+    
+    //
+    cudaMemcpy( hostAP, deviceA, sizeA, cudaMemcpyDeviceToHost );
+    
+    
+    cudaFree(deviceA);
+    
+}
+
+
+//subtractArray()
+__global__ void subtractArrayKernel(  double alpha, double *deviceA, int elementNum ){
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if( i < elementNum) {
+        deviceA[i] = alpha - deviceA[i];
+    }
+}
+
+void subtractArray( deviceContextStruct * deviceContextStructP,  double alpha, double * hostAP, int elementNum ){
+    int sizeA = elementNum * sizeof(double);
+    
+    //
+    double * deviceA;
+    cudaMalloc( (void **) &deviceA, sizeA );
+
+    //
+    cudaMemcpy( deviceA, hostAP, sizeA, cudaMemcpyHostToDevice );
+    
+    //
+    int threadsPerBlock = getMaxThreadsPerMultiProcessor( deviceContextStructP );
+    int blocksPerGrid = ( elementNum + threadsPerBlock - 1 ) / threadsPerBlock;
+    
+    subtractArrayKernel<<< blocksPerGrid, threadsPerBlock >>>( alpha, deviceA, elementNum );
     
     //
     cudaMemcpy( hostAP, deviceA, sizeA, cudaMemcpyDeviceToHost );

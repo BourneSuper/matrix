@@ -14,6 +14,8 @@ typedef struct {
 
 void arrayAdd( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum, double alpha );
 
+void subtractArray( deviceContextStruct * deviceContextStructP, double alpha, double * hostAP, int elementNum );
+
 void hadamardProduct( deviceContextStruct * deviceContextStructP, double * hostAP, double * hostBP, int elementNum );
 
 

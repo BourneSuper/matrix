@@ -282,8 +282,12 @@ class Math{
      */
     public static function arrayAdd( $arrA, $alpha){}
     
-    //TODO basic operation
-    public static function subtractArray( $numX, $arrA ){}
+    /**
+     * $alpha subtract on each element of $arrA
+     * @param double $alpha
+     * @param array $arr 1 or more dimension array within double type number
+     */
+    public static function subtractArray( $alpha, $arrA ){}
     
     //TODO basic operation
     public static function arrayMultiply( $arrA, $alpha){}

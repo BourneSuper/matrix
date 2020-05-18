@@ -42,6 +42,9 @@ static void ccResult( int result, const char *const file, int const line){
 
 
 PHP_METHOD( Math, arrayAdd );
+PHP_METHOD( Math, subtractArray );
+
+PHP_METHOD( Math, hadamardProduct );
 
 
 
