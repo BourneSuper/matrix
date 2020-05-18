@@ -33,11 +33,24 @@ cd matrix/
 **1. Matrix multiply**
 ```php
 <?php
-$matrixA = [ [ 1, 2 ][ 3, 4 ][ 5, 6 ] ]; //A(3,2)
-$matrixB = [ [ 7, 8, 9, 0 ][ 1, 2, 3, 4 ] ]; //B(2, 4)
+function randomArr( $height, $width ){
+    $arr = Util::initArrayBySize($height);
+    for($i = 0 ; $i < $height; $i++){
+        $tempArr = Util::initArrayBySize($width);
+        for ($j = 0 ; $j < $width; $j++){
+            $tempArr[] = rand(1,1000) + rand(1,1000) / 1000 ;
+        }
+        $arr[] = $tempArr;
+    }
+    
+    return $arr;
+}
+
+$matrixA = randomArr( 640, 480 ); //A( 640, 480 )
+$matrixB = randomArr( 480, 320 ); //B( 480, 320 )
 $blas = new BS\matrix\BLAS();
-$gpuCalculatedArr = $blas->multiply( $matrixA, $matrixB ); //A(3,2) x B(2, 4)
-var_dump( $gpuCalculatedArr );
+$gpuCalculatedArr = $blas->multiply( $matrixA, $matrixB ); //A( 640, 480 ) x B( 480, 320 ) , 1000+ times faster than CPU computation
+var_dump( $gpuCalculatedArr );//gpuCalculatedArr(640, 320)
 ?>
 ```
 **2. Hadamard product**
@@ -78,7 +91,7 @@ $arr = Util::initArrayBySize( $capacity ); //this can slightly improve performce
 **Want More?** <br/>
 Please see [_bs_matrix_ide_helper.php](https://github.com/BourneSuper/matrix/blob/master/_bs_matrix_ide_helper.php "_bs_matrix_ide_helper.php"). 
 
-## Help with test
+## Help with Test
 install composer first,then
 ```shell
 composer install
