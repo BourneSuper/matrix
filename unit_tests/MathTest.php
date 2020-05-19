@@ -121,6 +121,113 @@ class MathTest extends TestCase {
         
     }
     
+    public function testArrayMultiply(){
+        $arr = [ 1, 2, 3 ];
+        $resArr = Math::arrayMultiply( $arr, 2 );
+        $this->assertEquals( [ 2, 4, 6 ], $resArr );
+        
+        //
+        $arr = [
+            [ 1, 2, 3 ],
+            [ 4, 5, 6 ],
+        ];
+        $resArr = Math::arrayMultiply( $arr, 10 );
+        $this->assertEquals( 
+                [
+                        [ 10, 20, 30 ],
+                        [ 40, 50, 60 ],
+                ], $resArr 
+        );
+        
+        //
+        $arr = [
+            [ 
+                [ 1, 2, 3 ], 
+                [ 4, 5, 6 ] 
+            ],
+            [ 
+                [ 7, 8, 9 ], 
+                [ 10, 11, 12 ] 
+                
+            ],
+            
+        ];
+        $resArr = Math::arrayMultiply( $arr, -1 );
+        $this->assertEquals( 
+            [
+                [
+                    [ -1, -2, -3 ],
+                    [ -4, -5, -6 ]
+                ],
+                [
+                    [ -7, -8, -9 ],
+                    [ -10, -11, -12 ]
+                    
+                ],
+                
+            ], $resArr 
+        );
+        
+        
+    }
+    
+    public function testArrayPower(){
+        $arr = [ 1, 2, 3 ];
+        $resArr = Math::arrayPower( $arr, 2 );
+        $this->assertEquals( [ 1, 4, 9 ], $resArr );
+    }
+    
+    public function testDivideArray(){
+        $arr = [ 1, 2, 3 ];
+        $resArr = Math::divideArray( 1, $arr );
+        $resArr = array_map( function( $value ){ return round( $value, 2 ); }, $resArr );
+        $this->assertEquals( [ 1, 0.5, 0.33 ], $resArr );
+        
+        //
+        $arr = [
+            [ 1, 2, 5 ],
+            [ 5, 2, 1 ],
+        ];
+        $resArr = Math::divideArray( 10, $arr );
+        
+        $this->assertEquals( 
+                [
+                        [ 10, 5, 2 ],
+                        [ 2, 5, 10 ],
+                ], $resArr 
+        );
+        
+        //
+        $arr = [
+            [ 
+                [ 1, 2, 5 ], 
+                [ 10, 20, 25 ] 
+            ],
+            [ 
+                [ -1, -2, -5 ],
+                [ -10, -20, -25 ] 
+                
+            ],
+            
+        ];
+        $resArr = Math::divideArray( 100, $arr );
+        $this->assertEquals( 
+            [
+                [
+                    [ 100, 50, 20 ], 
+                    [ 10, 5, 4 ]
+                ],
+                [
+                    [ -100, -50, -20 ],
+                    [ -10, -5, -4 ]
+                ],
+                
+            ], $resArr 
+        );
+        
+        
+    }
+    
     public function testHadamardProduct(){
         
         //

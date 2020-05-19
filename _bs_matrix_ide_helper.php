@@ -289,13 +289,26 @@ class Math{
      */
     public static function subtractArray( $alpha, $arrA ){}
     
-    //TODO basic operation
+    
+    /**
+     * multiply $alpaha on each element of $arrA.
+     * @param array $arr 1 or more dimension array within double type number
+     * @param double $alpha
+     */
     public static function arrayMultiply( $arrA, $alpha){}
     
-    //TODO basic operation
-    public static function divideArray( $numX, $arrA ){}
+    /**
+     * $alpha subtract on each element of $arrA
+     * @param double $alpha
+     * @param array $arr 1 or more dimension array within double type number
+     */
+    public static function divideArray( $alpha, $arrA ){}
     
-    //TODO basic operation
+    /**
+     * multiply $alpaha on each element of $arrA.
+     * @param array $arr 1 or more dimension array within double type number
+     * @param double $alpha
+     */
     public static function arrayPower( $arrA, $alpha){}
     
     //TODO basic operation

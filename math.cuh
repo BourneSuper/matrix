@@ -16,6 +16,12 @@ void arrayAdd( deviceContextStruct * deviceContextStructP, double * hostAP, int 
 
 void subtractArray( deviceContextStruct * deviceContextStructP, double alpha, double * hostAP, int elementNum );
 
+void arrayMultiply( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum, double alpha );
+
+void divideArray( deviceContextStruct * deviceContextStructP, double alpha, double * hostAP, int elementNum );
+
+void arrayPower( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum, double alpha );
+
 void hadamardProduct( deviceContextStruct * deviceContextStructP, double * hostAP, double * hostBP, int elementNum );
 
 
