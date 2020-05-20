@@ -1,4 +1,4 @@
-[//] [![](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
+[//:] [![](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 # Matrix 
 Matrix is a PHP extension. It can do parallel computing based on CUDA.<br/>
 Why should we use GPU to do cumputation ? Because it can run 1000+ times faster than CPU when solve a parallel computation.<br/>
