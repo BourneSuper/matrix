@@ -46,6 +46,11 @@ PHP_METHOD( Math, subtractArray );
 PHP_METHOD( Math, arrayMultiply );
 PHP_METHOD( Math, divideArray );
 PHP_METHOD( Math, arrayPower );
+PHP_METHOD( Math, arraySquareRoot );
+PHP_METHOD( Math, arrayCubeRoot );
+PHP_METHOD( Math, logEArray );
+PHP_METHOD( Math, log2Array );
+PHP_METHOD( Math, log10Array );
 
 PHP_METHOD( Math, hadamardProduct );
 

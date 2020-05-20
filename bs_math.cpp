@@ -359,6 +359,191 @@ PHP_METHOD( Math, arrayPower ){
 
 }
 
+//arraySquareRoot()
+ZEND_BEGIN_ARG_INFO_EX( Math_arraySquareRoot_ArgInfo, 0, 0, 1 )
+    ZEND_ARG_ARRAY_INFO( 1, arrAP, 0 )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD( Math, arraySquareRoot ){
+
+    zval * arrAP = NULL;
+
+    ZEND_PARSE_PARAMETERS_START( 1, 1 )
+        Z_PARAM_ARRAY_EX( arrAP, 0, 1 )
+    ZEND_PARSE_PARAMETERS_END();
+
+    HashTable * hashTableAP = Z_ARRVAL_P(arrAP);
+    zval oneDimensionZval; array_init( &oneDimensionZval );
+    int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
+    int shapeInfoIndex = 0;
+
+    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+
+    //
+    int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
+    double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
+    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    arraySquareRoot( getDeviceContext(), hostAP, elementNum );
+
+    //
+    zval reshapedZval;array_init( &reshapedZval );
+    shapeInfoIndex = 0;
+    int previousCount = 0;
+    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+
+    //
+    RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+}
+
+//arrayCubeRoot()
+ZEND_BEGIN_ARG_INFO_EX( Math_arrayCubeRoot_ArgInfo, 0, 0, 1 )
+    ZEND_ARG_ARRAY_INFO( 1, arrAP, 0 )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD( Math, arrayCubeRoot ){
+
+    zval * arrAP = NULL;
+
+    ZEND_PARSE_PARAMETERS_START( 1, 1 )
+        Z_PARAM_ARRAY_EX( arrAP, 0, 1 )
+    ZEND_PARSE_PARAMETERS_END();
+
+    HashTable * hashTableAP = Z_ARRVAL_P(arrAP);
+    zval oneDimensionZval; array_init( &oneDimensionZval );
+    int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
+    int shapeInfoIndex = 0;
+
+    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+
+    //
+    int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
+    double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
+    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    arrayCubeRoot( getDeviceContext(), hostAP, elementNum );
+
+    //
+    zval reshapedZval;array_init( &reshapedZval );
+    shapeInfoIndex = 0;
+    int previousCount = 0;
+    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+
+    //
+    RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+}
+
+//logEArray()
+ZEND_BEGIN_ARG_INFO_EX( Math_logEArray_ArgInfo, 0, 0, 1 )
+    ZEND_ARG_ARRAY_INFO( 1, arrAP, 0 )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD( Math, logEArray ){
+
+    zval * arrAP = NULL;
+
+    ZEND_PARSE_PARAMETERS_START( 1, 1 )
+        Z_PARAM_ARRAY_EX( arrAP, 0, 1 )
+    ZEND_PARSE_PARAMETERS_END();
+
+    HashTable * hashTableAP = Z_ARRVAL_P(arrAP);
+    zval oneDimensionZval; array_init( &oneDimensionZval );
+    int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
+    int shapeInfoIndex = 0;
+
+    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+
+    //
+    int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
+    double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
+    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    logEArray( getDeviceContext(), hostAP, elementNum );
+
+    //
+    zval reshapedZval;array_init( &reshapedZval );
+    shapeInfoIndex = 0;
+    int previousCount = 0;
+    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+
+    //
+    RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+}
+
+//log2Array()
+ZEND_BEGIN_ARG_INFO_EX( Math_log2Array_ArgInfo, 0, 0, 1 )
+    ZEND_ARG_ARRAY_INFO( 1, arrAP, 0 )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD( Math, log2Array ){
+
+    zval * arrAP = NULL;
+
+    ZEND_PARSE_PARAMETERS_START( 1, 1 )
+        Z_PARAM_ARRAY_EX( arrAP, 0, 1 )
+    ZEND_PARSE_PARAMETERS_END();
+
+    HashTable * hashTableAP = Z_ARRVAL_P(arrAP);
+    zval oneDimensionZval; array_init( &oneDimensionZval );
+    int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
+    int shapeInfoIndex = 0;
+
+    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+
+    //
+    int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
+    double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
+    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    log2Array( getDeviceContext(), hostAP, elementNum );
+
+    //
+    zval reshapedZval;array_init( &reshapedZval );
+    shapeInfoIndex = 0;
+    int previousCount = 0;
+    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+
+    //
+    RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+}
+
+//log10Array()
+ZEND_BEGIN_ARG_INFO_EX( Math_log10Array_ArgInfo, 0, 0, 1 )
+    ZEND_ARG_ARRAY_INFO( 1, arrAP, 0 )
+ZEND_END_ARG_INFO()
+
+PHP_METHOD( Math, log10Array ){
+
+    zval * arrAP = NULL;
+
+    ZEND_PARSE_PARAMETERS_START( 1, 1 )
+        Z_PARAM_ARRAY_EX( arrAP, 0, 1 )
+    ZEND_PARSE_PARAMETERS_END();
+
+    HashTable * hashTableAP = Z_ARRVAL_P(arrAP);
+    zval oneDimensionZval; array_init( &oneDimensionZval );
+    int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
+    int shapeInfoIndex = 0;
+
+    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+
+    //
+    int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
+    double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
+    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    log10Array( getDeviceContext(), hostAP, elementNum );
+
+    //
+    zval reshapedZval;array_init( &reshapedZval );
+    shapeInfoIndex = 0;
+    int previousCount = 0;
+    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+
+    //
+    RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+}
+
 
 //hadamardProduct()
 ZEND_BEGIN_ARG_INFO_EX( Math_hadamardProduct_ArgInfo, 0, 0, 2 )
@@ -422,6 +607,11 @@ zend_function_entry Math_functions[] = {
     PHP_ME(Math, arrayMultiply, Math_arrayMultiply_ArgInfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC )
     PHP_ME(Math, divideArray, Math_divideArray_ArgInfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC )
     PHP_ME(Math, arrayPower, Math_arrayPower_ArgInfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC )
+    PHP_ME(Math, arraySquareRoot, Math_arraySquareRoot_ArgInfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC )
+    PHP_ME(Math, arrayCubeRoot, Math_arrayCubeRoot_ArgInfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC )
+    PHP_ME(Math, logEArray, Math_logEArray_ArgInfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC )
+    PHP_ME(Math, log2Array, Math_log2Array_ArgInfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC )
+    PHP_ME(Math, log10Array, Math_log10Array_ArgInfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC )
     PHP_ME(Math, hadamardProduct, Math_hadamardProduct_ArgInfo, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC )
     PHP_FE_END
 };

@@ -311,19 +311,34 @@ class Math{
      */
     public static function arrayPower( $arrA, $alpha){}
     
-    //TODO basic operation
-    public static function arraySquareRoot( $arrA, $alpha){}
+    /**
+     * calculate the square root of each element of $arrA
+     * @param array $arr 1 or more dimension array within double type number
+     */
+    public static function arraySquareRoot( $arrA ){}
     
-    //TODO basic operation
-    public static function arrayCubeRoot( $arrA, $alpha){}
+    /**
+     * calculate the cube root of each element of $arrA
+     * @param array $arr 1 or more dimension array within double type number
+     */
+    public static function arrayCubeRoot( $arrA ){}
     
-    //TODO basic operation
+    /**
+     * calculate the base e logarithm of each element of $arrA.
+     * @param array $arr 1 or more dimension array within double type number
+     */
     public static function logEArray( $arrA ){}
     
-    //TODO basic operation
+    /**
+     * calculate the base 3 logarithm of each element of $arrA.
+     * @param array $arr 1 or more dimension array within double type number
+     */
     public static function log2Array( $arrA ){}
     
-    //TODO basic operation
+    /**
+     * calculate the base 10 logarithm of each element of $arrA.
+     * @param array $arr 1 or more dimension array within double type number
+     */
     public static function log10Array( $arrA ){}
     
 

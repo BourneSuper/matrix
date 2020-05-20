@@ -196,6 +196,176 @@ void arrayPower( deviceContextStruct * deviceContextStructP, double * hostAP, in
 }
 
 
+//arraySquareRoot()
+__global__ void arraySquareRootKernel( double *deviceA, int elementNum ){
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if( i < elementNum) {
+        deviceA[i] =  sqrt( deviceA[i] );
+    }
+}
+
+void arraySquareRoot( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum ){
+    int sizeA = elementNum * sizeof(double);
+    
+    //
+    double * deviceA;
+    cudaMalloc( (void **) &deviceA, sizeA );
+
+    //
+    cudaMemcpy( deviceA, hostAP, sizeA, cudaMemcpyHostToDevice );
+    
+    //
+    int threadsPerBlock = getMaxThreadsPerMultiProcessor( deviceContextStructP );
+    int blocksPerGrid = ( elementNum + threadsPerBlock - 1 ) / threadsPerBlock;
+    
+    arraySquareRootKernel<<< blocksPerGrid, threadsPerBlock >>>( deviceA, elementNum );
+    
+    //
+    cudaMemcpy( hostAP, deviceA, sizeA, cudaMemcpyDeviceToHost );
+    
+    
+    cudaFree(deviceA);
+    
+}
+
+
+//arrayCubeRoot()
+__global__ void arrayCubeRootKernel( double *deviceA, int elementNum ){
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if( i < elementNum) {
+        deviceA[i] =  cbrt( deviceA[i] );
+    }
+}
+
+void arrayCubeRoot( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum ){
+    int sizeA = elementNum * sizeof(double);
+    
+    //
+    double * deviceA;
+    cudaMalloc( (void **) &deviceA, sizeA );
+
+    //
+    cudaMemcpy( deviceA, hostAP, sizeA, cudaMemcpyHostToDevice );
+    
+    //
+    int threadsPerBlock = getMaxThreadsPerMultiProcessor( deviceContextStructP );
+    int blocksPerGrid = ( elementNum + threadsPerBlock - 1 ) / threadsPerBlock;
+    
+    arrayCubeRootKernel<<< blocksPerGrid, threadsPerBlock >>>( deviceA, elementNum );
+    
+    //
+    cudaMemcpy( hostAP, deviceA, sizeA, cudaMemcpyDeviceToHost );
+    
+    
+    cudaFree(deviceA);
+    
+}
+
+
+//logEArray()
+__global__ void logEArrayKernel( double *deviceA, int elementNum ){
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if( i < elementNum) {
+        deviceA[i] =  log( deviceA[i] );
+    }
+}
+
+void logEArray( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum ){
+    int sizeA = elementNum * sizeof(double);
+    
+    //
+    double * deviceA;
+    cudaMalloc( (void **) &deviceA, sizeA );
+
+    //
+    cudaMemcpy( deviceA, hostAP, sizeA, cudaMemcpyHostToDevice );
+    
+    //
+    int threadsPerBlock = getMaxThreadsPerMultiProcessor( deviceContextStructP );
+    int blocksPerGrid = ( elementNum + threadsPerBlock - 1 ) / threadsPerBlock;
+    
+    logEArrayKernel<<< blocksPerGrid, threadsPerBlock >>>( deviceA, elementNum );
+    
+    //
+    cudaMemcpy( hostAP, deviceA, sizeA, cudaMemcpyDeviceToHost );
+    
+    
+    cudaFree(deviceA);
+    
+}
+
+
+//log2Array()
+__global__ void log2ArrayKernel( double *deviceA, int elementNum ){
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if( i < elementNum) {
+        deviceA[i] =  log2( deviceA[i] );
+    }
+}
+
+void log2Array( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum ){
+    int sizeA = elementNum * sizeof(double);
+    
+    //
+    double * deviceA;
+    cudaMalloc( (void **) &deviceA, sizeA );
+
+    //
+    cudaMemcpy( deviceA, hostAP, sizeA, cudaMemcpyHostToDevice );
+    
+    //
+    int threadsPerBlock = getMaxThreadsPerMultiProcessor( deviceContextStructP );
+    int blocksPerGrid = ( elementNum + threadsPerBlock - 1 ) / threadsPerBlock;
+    
+    log2ArrayKernel<<< blocksPerGrid, threadsPerBlock >>>( deviceA, elementNum );
+    
+    //
+    cudaMemcpy( hostAP, deviceA, sizeA, cudaMemcpyDeviceToHost );
+    
+    
+    cudaFree(deviceA);
+    
+}
+
+
+//log10Array()
+__global__ void log10ArrayKernel( double *deviceA, int elementNum ){
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if( i < elementNum) {
+        deviceA[i] =  log10( deviceA[i] );
+    }
+}
+
+void log10Array( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum ){
+    int sizeA = elementNum * sizeof(double);
+    
+    //
+    double * deviceA;
+    cudaMalloc( (void **) &deviceA, sizeA );
+
+    //
+    cudaMemcpy( deviceA, hostAP, sizeA, cudaMemcpyHostToDevice );
+    
+    //
+    int threadsPerBlock = getMaxThreadsPerMultiProcessor( deviceContextStructP );
+    int blocksPerGrid = ( elementNum + threadsPerBlock - 1 ) / threadsPerBlock;
+    
+    log10ArrayKernel<<< blocksPerGrid, threadsPerBlock >>>( deviceA, elementNum );
+    
+    //
+    cudaMemcpy( hostAP, deviceA, sizeA, cudaMemcpyDeviceToHost );
+    
+    
+    cudaFree(deviceA);
+    
+}
+
+
 //hadamardProduct()
 __global__ void hadamardProductKernel( double * deviceA, double * deviceB, int elementNum ){
     int i = blockDim.x * blockIdx.x + threadIdx.x;

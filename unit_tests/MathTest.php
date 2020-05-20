@@ -171,12 +171,6 @@ class MathTest extends TestCase {
         
     }
     
-    public function testArrayPower(){
-        $arr = [ 1, 2, 3 ];
-        $resArr = Math::arrayPower( $arr, 2 );
-        $this->assertEquals( [ 1, 4, 9 ], $resArr );
-    }
-    
     public function testDivideArray(){
         $arr = [ 1, 2, 3 ];
         $resArr = Math::divideArray( 1, $arr );
@@ -226,6 +220,43 @@ class MathTest extends TestCase {
         );
         
         
+    }
+    
+    public function testArrayPower(){
+        $arr = [ 1, 2, 3 ];
+        $resArr = Math::arrayPower( $arr, 2 );
+        $this->assertEquals( [ 1, 4, 9 ], $resArr );
+    }
+    
+    public function testArraySquareRoot(){
+        $arr = [ 1, 4, 9 ];
+        $resArr = Math::arraySquareRoot( $arr );
+        $this->assertEquals( [ 1, 2, 3 ], $resArr );
+    }
+    
+    public function testArrayCubeRoot(){
+        $arr = [ 1, 8, 27 ];
+        $resArr = Math::arrayCubeRoot( $arr );
+        $this->assertEquals( [ 1, 2, 3 ], $resArr );
+    }
+    
+    public function testLogEArray(){
+        $arr = [ 1, 8, 27 ];
+        $resArr = Math::logEArray( $arr );
+        $resArr = array_map( function( $value ){ return round( $value, 4 ); }, $resArr );
+        $this->assertEquals( [ 0, 2.0794, 3.2958 ], $resArr );
+    }
+    
+    public function testLog2Array(){
+        $arr = [ 1, 4, 8 ];
+        $resArr = Math::log2Array( $arr );
+        $this->assertEquals( [ 0, 2, 3 ], $resArr );
+    }
+    
+    public function testLog10Array(){
+        $arr = [ 1, 100, 1000 ];
+        $resArr = Math::log10Array( $arr );
+        $this->assertEquals( [ 0, 2, 3 ], $resArr );
     }
     
     public function testHadamardProduct(){

@@ -22,6 +22,16 @@ void divideArray( deviceContextStruct * deviceContextStructP, double alpha, doub
 
 void arrayPower( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum, double alpha );
 
+void arraySquareRoot( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum );
+
+void arrayCubeRoot( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum );
+
+void logEArray( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum );
+
+void log2Array( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum );
+
+void log10Array( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum );
+
 void hadamardProduct( deviceContextStruct * deviceContextStructP, double * hostAP, double * hostBP, int elementNum );
 
 
