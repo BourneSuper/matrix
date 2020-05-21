@@ -76,7 +76,7 @@ var_dump( $gpuCalculatedArr );
 **3. Get GPU's name**
 ```php
 <?php
-$deviceCount = Util::cudaGetDeviceCount();
+$deviceCount = BS\matrix\Util::cudaGetDeviceCount();
 printf( "CUDA device count: %d \n", $deviceCount );
 
 $deviceId = $deviceCount - 1;
@@ -86,7 +86,7 @@ printf( "CUDA device id: %d, name: %s \n", $deviceId, Util::getDeviceNameById($d
 **4. Create and init an array with certain capacity**
 ```php
 <?php
-$arr = Util::initArrayBySize( $capacity ); //this can slightly improve performce when access, insert or update an array
+$arr = BS\matrix\Util::initArrayBySize( $capacity ); //this can slightly improve performce when access, insert or update an array
 ?>
 ```
 
