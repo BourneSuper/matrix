@@ -53,6 +53,7 @@ PHP_METHOD( Math, log2Array );
 PHP_METHOD( Math, log10Array );
 
 PHP_METHOD( Math, hadamardProduct );
+PHP_METHOD( Math, transpose );
 
 
 

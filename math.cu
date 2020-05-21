@@ -402,6 +402,44 @@ void hadamardProduct( deviceContextStruct * deviceContextStructP, double * hostA
 }
 
 
+//transpose()
+__global__ void transposeKernel( double *deviceA, int elementNum, int heightA, int widthA, double *deviceB ){
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if( i < elementNum ) {
+        int bI = i / heightA;
+        int bJ = i % heightA;
+        deviceB[i] =  deviceA[ bJ * widthA + bI ];
+    }
+}
+
+void transpose( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum, int heightA, int wigthA ){
+    int sizeA = elementNum * sizeof(double);
+    
+    //
+    double * deviceA, * deviceB;
+    cudaMalloc( (void **) &deviceA, sizeA );
+    cudaMalloc( (void **) &deviceB, sizeA );
+
+    //
+    cudaMemcpy( deviceA, hostAP, sizeA, cudaMemcpyHostToDevice );
+    
+    //
+    int threadsPerBlock = getMaxThreadsPerMultiProcessor( deviceContextStructP );
+    int blocksPerGrid = ( elementNum + threadsPerBlock - 1 ) / threadsPerBlock;
+    
+    transposeKernel<<< blocksPerGrid, threadsPerBlock >>>( deviceA, elementNum, heightA, wigthA, deviceB );
+
+    //
+    cudaMemcpy( hostAP, deviceB, sizeA, cudaMemcpyDeviceToHost );
+    
+    
+    cudaFree(deviceA);
+    cudaFree(deviceB);
+    
+}
+
+
 
 
 

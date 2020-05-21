@@ -34,6 +34,8 @@ void log10Array( deviceContextStruct * deviceContextStructP, double * hostAP, in
 
 void hadamardProduct( deviceContextStruct * deviceContextStructP, double * hostAP, double * hostBP, int elementNum );
 
+void transpose( deviceContextStruct * deviceContextStructP, double * hostAP, int elementNum, int wigthA, int heightA );
+
 
 
 

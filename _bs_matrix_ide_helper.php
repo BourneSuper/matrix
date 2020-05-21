@@ -356,8 +356,12 @@ class Math{
      */
     public static function hadamardProduct( $matrixA, $matrixB ){}
     
-    //TODO advanced operation
-    public static function transpose( $arrA ){}
+    /**
+     * tranpose $matrixA
+     * @param array $matrixA two dimension array within double type number
+     * @return array two dimension array within double type number
+     */
+    public static function transpose( $matrixA ){}
     
     
     
