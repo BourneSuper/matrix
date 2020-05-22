@@ -36,7 +36,8 @@
 #include <zend_exceptions.h>
 #include "ext/standard/info.h"
 
-#include <dev_util_c.h>
+#include "dev_util_c.h"
+#include "dev_util_p.h"
 #include "php_bs_matrix.h"
 #include "php_bs_util.h"
 #include "php_bs_math.h"
@@ -84,83 +85,7 @@ void dev_printMatrix(double * C, unsigned int height, unsigned int width) {
     }
 }
 
-/**
- *
- */
-void util_HashTableTo1DArr( HashTable * hashTableP, double * arrP  ){
-    int count = 0;
-    zend_long hash;
-    zend_string *key;
-    zval *zvalue;
-    zend_long h;
-    zend_string *k;
-    zval *zv;
-    ZEND_HASH_FOREACH_KEY_VAL( hashTableP, hash, key, zvalue ){
 
-        ZEND_HASH_FOREACH_KEY_VAL( Z_ARRVAL_P(zvalue), h, k, zv ){
-
-            arrP[ count ] = zval_get_double_func(zv);
-
-            count++;
-        }ZEND_HASH_FOREACH_END();
-    } ZEND_HASH_FOREACH_END();
-
-}
-
-/**
- *
- */
-void util_HashTableTo1DArrS( HashTable * hashTableP, float * arrP  ){
-    int count = 0;
-    zend_long hash;
-    zend_string *key;
-    zval *zvalue;
-    zend_long h;
-    zend_string *k;
-    zval *zv;
-    ZEND_HASH_FOREACH_KEY_VAL( hashTableP, hash, key, zvalue ){
-
-        ZEND_HASH_FOREACH_KEY_VAL( Z_ARRVAL_P(zvalue), h, k, zv ){
-
-            arrP[ count ] = (float)zval_get_double_func(zv);
-
-            count++;
-        }ZEND_HASH_FOREACH_END();
-    } ZEND_HASH_FOREACH_END();
-
-}
-
-/**
- *
- */
-void util_HashTableTo1DArrOne( HashTable * hashTableP, double * arrP  ){
-    int count = 0;
-    zend_long hash;
-    zend_string *key;
-    zval *zvalue;
-    ZEND_HASH_FOREACH_KEY_VAL( hashTableP, hash, key, zvalue ){
-        arrP[ count ] = zval_get_double_func(zvalue);
-
-        count++;
-    } ZEND_HASH_FOREACH_END();
-
-}
-
-/**
- *
- */
-void util_HashTableTo1DArrOneS( HashTable * hashTableP, float * arrP  ){
-    int count = 0;
-    zend_long hash;
-    zend_string *key;
-    zval *zvalue;
-    ZEND_HASH_FOREACH_KEY_VAL( hashTableP, hash, key, zvalue ){
-        arrP[ count ] = (float)zval_get_double_func(zvalue);
-
-        count++;
-    } ZEND_HASH_FOREACH_END();
-
-}
 
 
 
@@ -193,7 +118,7 @@ PHP_METHOD(BLAS, __construct){
     int deviceCount = 0;
     cudaGetDeviceCount(&deviceCount);
     if (deviceCount == 0) {
-        zend_throw_exception_ex(NULL, 1000, duc_getErrorMsg(1000), NULL );
+        zend_throw_exception_ex(NULL, 1001, duc_getErrorMsg(1001), NULL );
     }
 
     //-----------------
@@ -324,10 +249,10 @@ PHP_METHOD(BLAS, multiply){
     double * hostBP = ( double * )malloc( heightB * widthB * sizeof(double) );
     double * hostCP = ( double * )calloc( heightA * widthB, sizeof(double) );
 
-    util_HashTableTo1DArr( hashTableAP, hostAP );
-    util_HashTableTo1DArr( hashTableBP, hostBP );
+    dup_HashTableTo1DArr( hashTableAP, hostAP );
+    dup_HashTableTo1DArr( hashTableBP, hostBP );
     if( hashTableCP != NULL ){
-        util_HashTableTo1DArr( hashTableCP, hostCP );
+        dup_HashTableTo1DArr( hashTableCP, hostCP );
     }
 
 //    dev_printMatrix( hostAP, heightA, widthA );
@@ -360,14 +285,16 @@ PHP_METHOD(BLAS, multiply){
     // CUBLAS library uses column-major storage, but C/C++ use row-major storage.
     // When passing the matrix pointer to CUBLAS, the memory layout alters from
     // row-major to column-major, which is equivalent to an implicit transpose.
-    cublasDgemm(cudaHandleStructP->handle,
-            CUBLAS_OP_N, CUBLAS_OP_N,
-            widthB, heightA, widthA,
-            &alpha,
-            deviceBP, widthB,
-            deviceAP, widthA,
-            &beta,
-            deviceCP, widthB
+    checkCudaResult(
+            cublasDgemm(cudaHandleStructP->handle,
+                    CUBLAS_OP_N, CUBLAS_OP_N,
+                    widthB, heightA, widthA,
+                    &alpha,
+                    deviceBP, widthB,
+                    deviceAP, widthA,
+                    &beta,
+                    deviceCP, widthB
+            )
     );
 
     cudaEventSynchronize(stop);
@@ -478,10 +405,10 @@ PHP_METHOD(BLAS, multiplyS){
     float * hostBP = ( float * )malloc( heightB * widthB * sizeof(float) );
     float * hostCP = ( float * )calloc( heightA * widthB, sizeof(float) );
 
-    util_HashTableTo1DArrS( hashTableAP, hostAP );
-    util_HashTableTo1DArrS( hashTableBP, hostBP );
+    dup_HashTableTo1DArrS( hashTableAP, hostAP );
+    dup_HashTableTo1DArrS( hashTableBP, hostBP );
     if( hashTableCP != NULL ){
-        util_HashTableTo1DArrS( hashTableCP, hostCP );
+        dup_HashTableTo1DArrS( hashTableCP, hostCP );
     }
 
 //    dev_printMatrix( hostAP, heightA, widthA );
@@ -512,14 +439,16 @@ PHP_METHOD(BLAS, multiplyS){
     // CUBLAS library uses column-major storage, but C/C++ use row-major storage.
     // When passing the matrix pointer to CUBLAS, the memory layout alters from
     // row-major to column-major, which is equivalent to an implicit transpose.
-    cublasSgemm(cudaHandleStructP->handle,
-            CUBLAS_OP_N, CUBLAS_OP_N,
-            widthB, heightA, widthA,
-            &alpha,
-            deviceBP, widthB,
-            deviceAP, widthA,
-            &beta,
-            deviceCP, widthB
+    checkCudaResult(
+            cublasSgemm(cudaHandleStructP->handle,
+                    CUBLAS_OP_N, CUBLAS_OP_N,
+                    widthB, heightA, widthA,
+                    &alpha,
+                    deviceBP, widthB,
+                    deviceAP, widthA,
+                    &beta,
+                    deviceCP, widthB
+            )
     );
 
     cudaEventSynchronize(stop);
@@ -594,8 +523,8 @@ PHP_METHOD(BLAS, dot){
     double * hostBP = ( double * )malloc( elementNumB * sizeof(double) );
     double * hostCP = ( double * )malloc( 1 * sizeof(double) );
 
-    util_HashTableTo1DArrOne( hashTableAP, hostAP );
-    util_HashTableTo1DArrOne( hashTableBP, hostBP );
+    dup_HashTableTo1DArrOne( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOne( hashTableBP, hostBP );
 
     //
     double * deviceAP, * deviceBP, * deviceCP;
@@ -617,13 +546,13 @@ PHP_METHOD(BLAS, dot){
     cudaEventCreate(&stop);
 
 
-//    const double alpha = 1.0;
-//    const double beta = 0.0;
-    cublasDdot(cudaHandleStructP->handle,
-            elementNumA,
-            deviceAP, strideA,
-            deviceBP, strideB,
-            deviceCP
+    checkCudaResult(
+            cublasDdot(cudaHandleStructP->handle,
+                    elementNumA,
+                    deviceAP, strideA,
+                    deviceBP, strideB,
+                    deviceCP
+            )
     );
 
     cudaEventSynchronize(stop);
@@ -681,8 +610,8 @@ PHP_METHOD(BLAS, dotS){
     float * hostBP = ( float * )malloc( elementNumB * sizeof(float) );
     float * hostCP = ( float * )malloc( 1 * sizeof(float) );
 
-    util_HashTableTo1DArrOneS( hashTableAP, hostAP );
-    util_HashTableTo1DArrOneS( hashTableBP, hostBP );
+    dup_HashTableTo1DArrOneS( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOneS( hashTableBP, hostBP );
 
     //
     float * deviceAP, * deviceBP, * deviceCP;
@@ -704,13 +633,13 @@ PHP_METHOD(BLAS, dotS){
     cudaEventCreate(&stop);
 
 
-//    const double alpha = 1.0;
-//    const double beta = 0.0;
-    cublasSdot(cudaHandleStructP->handle,
-            elementNumA,
-            deviceAP, strideA,
-            deviceBP, strideB,
-            deviceCP
+    checkCudaResult(
+            cublasSdot(cudaHandleStructP->handle,
+                    elementNumA,
+                    deviceAP, strideA,
+                    deviceBP, strideB,
+                    deviceCP
+            )
     );
 
     cudaEventSynchronize(stop);
@@ -759,7 +688,7 @@ PHP_METHOD(BLAS, scal){
     //
     double * hostAP = ( double * )malloc( elementNumA * sizeof(double) );
 
-    util_HashTableTo1DArrOne( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOne( hashTableAP, hostAP );
 
     //
     double * deviceAP;
@@ -778,11 +707,11 @@ PHP_METHOD(BLAS, scal){
     cudaEventCreate(&stop);
 
 
-//    const double alpha = 1.0;
-//    const double beta = 0.0;
-    cublasDscal(cudaHandleStructP->handle,
-            elementNumA,
-            &alpha, deviceAP, increase
+    checkCudaResult(
+            cublasDscal(cudaHandleStructP->handle,
+                    elementNumA,
+                    &alpha, deviceAP, increase
+            )
     );
 
     cudaEventSynchronize(stop);
@@ -835,7 +764,7 @@ PHP_METHOD(BLAS, scalS){
     //
     float * hostAP = ( float * )malloc( elementNumA * sizeof(float) );
 
-    util_HashTableTo1DArrOneS( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOneS( hashTableAP, hostAP );
 
     //
     float * deviceAP;
@@ -854,11 +783,11 @@ PHP_METHOD(BLAS, scalS){
     cudaEventCreate(&stop);
 
 
-//    const double alpha = 1.0;
-//    const double beta = 0.0;
-    cublasSscal(cudaHandleStructP->handle,
-            elementNumA,
-            &alpha, deviceAP, increase
+    checkCudaResult(
+            cublasSscal(cudaHandleStructP->handle,
+                    elementNumA,
+                    &alpha, deviceAP, increase
+            )
     );
 
     cudaEventSynchronize(stop);
@@ -908,7 +837,7 @@ PHP_METHOD(BLAS, amax){
     //
     double * hostAP = ( double * )malloc( elementNumA * sizeof(double) );
 
-    util_HashTableTo1DArrOne( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOne( hashTableAP, hostAP );
 
     //
     double * deviceAP;
@@ -974,7 +903,7 @@ PHP_METHOD(BLAS, amaxS){
     //
     float * hostAP = ( float * )malloc( elementNumA * sizeof(float) );
 
-    util_HashTableTo1DArrOneS( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOneS( hashTableAP, hostAP );
 
     //
     float * deviceAP;
@@ -1039,7 +968,7 @@ PHP_METHOD(BLAS, amin){
     //
     double * hostAP = ( double * )malloc( elementNumA * sizeof(double) );
 
-    util_HashTableTo1DArrOne( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOne( hashTableAP, hostAP );
 
     //
     double * deviceAP;
@@ -1105,7 +1034,7 @@ PHP_METHOD(BLAS, aminS){
     //
     float * hostAP = ( float * )malloc( elementNumA * sizeof(float) );
 
-    util_HashTableTo1DArrOneS( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOneS( hashTableAP, hostAP );
 
     //
     float * deviceAP;
@@ -1182,8 +1111,8 @@ PHP_METHOD(BLAS, axpy){
     double * hostAP = ( double * )malloc( elementNumA * sizeof(double) );
     double * hostBP = ( double * )malloc( elementNumB * sizeof(double) );
 
-    util_HashTableTo1DArrOne( hashTableAP, hostAP );
-    util_HashTableTo1DArrOne( hashTableBP, hostBP );
+    dup_HashTableTo1DArrOne( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOne( hashTableBP, hostBP );
 
     //
     double * deviceAP, * deviceBP;
@@ -1274,8 +1203,8 @@ PHP_METHOD(BLAS, axpyS){
     float * hostAP = ( float * )malloc( elementNumA * sizeof(float) );
     float * hostBP = ( float * )malloc( elementNumB * sizeof(float) );
 
-    util_HashTableTo1DArrOneS( hashTableAP, hostAP );
-    util_HashTableTo1DArrOneS( hashTableBP, hostBP );
+    dup_HashTableTo1DArrOneS( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOneS( hashTableBP, hostBP );
 
     //
     float * deviceAP, * deviceBP;
@@ -1397,11 +1326,11 @@ PHP_METHOD(BLAS, gemv){
     double * hostXP = ( double * )malloc( elementNumX * sizeof(double) );
     double * hostYP = ( double * )calloc( elementNumY, sizeof(double) );
 
-    util_HashTableTo1DArr( hashTableAP, hostAP );
-    util_HashTableTo1DArrOne( hashTableXP, hostXP );
+    dup_HashTableTo1DArr( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOne( hashTableXP, hostXP );
 
     if( oneDimensionArrYP != NULL ){
-        util_HashTableTo1DArrOne( hashTableYP, hostYP );
+        dup_HashTableTo1DArrOne( hashTableYP, hostYP );
     }
 
     //
@@ -1539,11 +1468,11 @@ PHP_METHOD(BLAS, gemvS){
     float * hostXP = ( float * )malloc( elementNumX * sizeof(float) );
     float * hostYP = ( float * )calloc( elementNumY, sizeof(float) );
 
-    util_HashTableTo1DArrS( hashTableAP, hostAP );
-    util_HashTableTo1DArrOneS( hashTableXP, hostXP );
+    dup_HashTableTo1DArrS( hashTableAP, hostAP );
+    dup_HashTableTo1DArrOneS( hashTableXP, hostXP );
 
     if( oneDimensionArrYP != NULL ){
-        util_HashTableTo1DArrOneS( hashTableYP, hostYP );
+        dup_HashTableTo1DArrOneS( hashTableYP, hostYP );
     }
 
     //
@@ -1661,6 +1590,7 @@ PHP_MINIT_FUNCTION(bs_matrix){
 
     Math_ce = zend_register_internal_class(&temp_Math_ce TSRMLS_CC);
     zend_declare_property_long( Math_ce, "DEVICE_ID", sizeof("DEVICE_ID") - 1, 0, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC TSRMLS_CC );
+
 
     return SUCCESS;
 }

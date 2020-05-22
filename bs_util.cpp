@@ -35,6 +35,7 @@
 #include <zend_exceptions.h>
 #include "ext/standard/info.h"
 #include "php_bs_util.h"
+#include "dev_util_p.h"
 
 
 

@@ -1,11 +1,22 @@
+/*
+ * Matrix is a PHP extension. It can do parallel computing base on CUDA.
+ *
+ * GitHub: https://github.com/BourneSuper/matrix
+ *
+ * Author: Bourne Wong <cb44606@gmail.com>
+ *
+ * */
+
 #include <stdio.h>
 
-#include <dev_util_c.h>
+#include "dev_util_c.h"
 
 
 char * duc_getErrorMsg( int code ){
     char * errorCodeMap[3000];
-    errorCodeMap[1000] = (char *)"There are no available device(s) that support CUDA \n";
+    errorCodeMap[1000] = (char *)"CUDA error. Code %d (File:%s Line: %d)\n \n";
+    errorCodeMap[1001] = (char *)"There are no available device(s) that support CUDA \n";
+
 
     errorCodeMap[2000] = (char *)"the width of martrixA( %d, %d ) can not match with the height of matrixB( %d, %d )\n";
     errorCodeMap[2001] = (char *)"matrixArrA must be two dimension array\n";

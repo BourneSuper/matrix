@@ -37,7 +37,8 @@
 #include "math.cuh"
 #include "php_bs_math.h"
 
-#include <dev_util_c.h>
+#include "dev_util_c.h"
+#include "dev_util_p.h"
 
 
 
@@ -47,75 +48,7 @@ zend_class_entry * Math_ce;
 
 
 
-void hashTableTo1DZval( HashTable * hashTableP, zval oneDimesionzval, int * shapeInfo, int * shapeInfoIndex ){
-    zend_long hash;
-    zend_string *key;
-    zval * zvalue;
-    int tempCount = 0;
 
-    ZEND_HASH_FOREACH_KEY_VAL( hashTableP, hash, key, zvalue ){
-        if( Z_TYPE_P( zvalue ) == IS_ARRAY ){
-            ( * shapeInfoIndex )++;
-            hashTableTo1DZval( Z_ARRVAL_P(zvalue), oneDimesionzval, shapeInfo, shapeInfoIndex  );
-            ( * shapeInfoIndex )--;
-        }else{
-            add_next_index_double( &oneDimesionzval, zval_get_double_func(zvalue) );
-        }
-        tempCount++;
-
-    } ZEND_HASH_FOREACH_END();
-
-    shapeInfo[ * shapeInfoIndex ] = tempCount;
-
-}
-
-void oneDimesnPointerArrReshapeToZval( double * arrP, zval reshapedZval, int * shapeInfo, int * shapeInfoIndex, int * previousCount ){
-    //
-    int shapeInfoCount = 10;
-    for( int i = 0; i < 10; i++ ){
-        if( shapeInfo[i] == 0 ){
-            shapeInfoCount = i;
-            break;
-        }
-    }
-
-    //
-    if( shapeInfo[ * shapeInfoIndex ] == 0 ){
-        return ;
-    }
-
-    if( * shapeInfoIndex == ( shapeInfoCount - 1 ) ){
-        for( int i = 0; i < shapeInfo[ * shapeInfoIndex ]; i++ ){
-            add_next_index_double( &reshapedZval, arrP[ ( * previousCount + i ) ] );
-        }
-        ( * previousCount ) += shapeInfo[ * shapeInfoIndex ];
-    }else{
-        for( int i = 0; i < shapeInfo[ * shapeInfoIndex ]; i++ ){
-            zval tempZval;array_init( &tempZval );
-            ( * shapeInfoIndex )++;
-            oneDimesnPointerArrReshapeToZval( arrP, tempZval, shapeInfo, shapeInfoIndex, previousCount );
-            ( * shapeInfoIndex )--;
-            add_next_index_zval( &reshapedZval, &tempZval );
-        }
-    }
-
-
-
-}
-
-void oneDimensionZavlToPointerArr( zval * oneDimensionZavl, double * arrP ){
-    HashTable * hashTableP = Z_ARRVAL_P(oneDimensionZavl);
-
-    int count = 0;
-    zend_long hash;
-    zend_string *key;
-    zval *zvalue;
-    ZEND_HASH_FOREACH_KEY_VAL( hashTableP, hash, key, zvalue ){
-        arrP[ count ] = (float)zval_get_double_func(zvalue);
-
-        count++;
-    } ZEND_HASH_FOREACH_END();
-}
 
 deviceContextStruct * getDeviceContext(){
     deviceContextStruct * deviceContextStructP = (deviceContextStruct *) malloc( sizeof(deviceContextStruct) );
@@ -182,19 +115,19 @@ PHP_METHOD( Math, arrayAdd ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     arrayAdd( getDeviceContext(), hostAP, elementNum, alpha );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -224,19 +157,19 @@ PHP_METHOD( Math, subtractArray ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     subtractArray( getDeviceContext(), alpha, hostAP, elementNum );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -266,19 +199,19 @@ PHP_METHOD( Math, arrayMultiply ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     arrayMultiply( getDeviceContext(), hostAP, elementNum, alpha );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -308,19 +241,19 @@ PHP_METHOD( Math, divideArray ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     divideArray( getDeviceContext(), alpha, hostAP, elementNum );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -350,19 +283,19 @@ PHP_METHOD( Math, arrayPower ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     arrayPower( getDeviceContext(), hostAP, elementNum, alpha );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -389,19 +322,19 @@ PHP_METHOD( Math, arraySquareRoot ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     arraySquareRoot( getDeviceContext(), hostAP, elementNum );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -428,19 +361,19 @@ PHP_METHOD( Math, arrayCubeRoot ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     arrayCubeRoot( getDeviceContext(), hostAP, elementNum );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -467,19 +400,19 @@ PHP_METHOD( Math, logEArray ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     logEArray( getDeviceContext(), hostAP, elementNum );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -506,19 +439,19 @@ PHP_METHOD( Math, log2Array ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     log2Array( getDeviceContext(), hostAP, elementNum );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -545,19 +478,19 @@ PHP_METHOD( Math, log10Array ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     log10Array( getDeviceContext(), hostAP, elementNum );
 
     //
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndex = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -587,22 +520,22 @@ PHP_METHOD( Math, hadamardProduct ){
     int * shapeInfoA = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndexA = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionAZval, shapeInfoA, &shapeInfoIndexA );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionAZval, shapeInfoA, &shapeInfoIndexA );
 
     HashTable * hashTableBP = Z_ARRVAL_P(arrBP);
     zval oneDimensionBZval; array_init( &oneDimensionBZval );
     int * shapeInfoB = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndexB = 0;
 
-    hashTableTo1DZval( hashTableBP, oneDimensionBZval, shapeInfoB, &shapeInfoIndexB );
+    dup_hashTableTo1DZval( hashTableBP, oneDimensionBZval, shapeInfoB, &shapeInfoIndexB );
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionAZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionAZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionAZval, hostAP );
 
     double * hostBP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionBZval, hostBP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionBZval, hostBP );
 
     //
     hadamardProduct( getDeviceContext(), hostAP, hostBP, elementNum );
@@ -611,7 +544,7 @@ PHP_METHOD( Math, hadamardProduct ){
     zval reshapedZval;array_init( &reshapedZval );
     shapeInfoIndexA = 0;
     int previousCount = 0;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfoA, &shapeInfoIndexA, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfoA, &shapeInfoIndexA, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
@@ -639,7 +572,7 @@ PHP_METHOD( Math, transpose ){
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
-    hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
+    dup_hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
     //
     if( shapeInfo[0] < 1 || shapeInfo[1] < 1 || shapeInfo[2] != 0 ){
@@ -649,7 +582,7 @@ PHP_METHOD( Math, transpose ){
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
     double * hostAP = ( double * )calloc( elementNum, sizeof(double) );
-    oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
+    dup_oneDimensionZavlToPointerArr( &oneDimensionZval, hostAP );
     transpose( getDeviceContext(), hostAP, elementNum, shapeInfo[0], shapeInfo[1] );
 
     //
@@ -657,7 +590,7 @@ PHP_METHOD( Math, transpose ){
     shapeInfoIndex = 0;
     int previousCount = 0;
     int temp = shapeInfo[0]; shapeInfo[0] = shapeInfo[1]; shapeInfo[1] = temp;
-    oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
+    dup_oneDimesnPointerArrReshapeToZval( hostAP, reshapedZval, shapeInfo, &shapeInfoIndex, &previousCount );
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );

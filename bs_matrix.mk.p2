@@ -3,11 +3,12 @@ bs_matrix:
 	rm ./.libs -rf
 	mkdir ./.libs
 	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/dev_util_c.cpp -shared -Xcompiler -fPIC -o .libs/dev_util_c.o
+	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/dev_util_p.cpp -shared -Xcompiler -fPIC -o .libs/dev_util_p.o
 	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/bs_matrix.cpp -shared -Xcompiler -fPIC -o .libs/bs_matrix.o
 	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/bs_util.cpp -shared -Xcompiler -fPIC -o .libs/bs_util.o
 	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/bs_math.cpp -shared -Xcompiler -fPIC -o .libs/bs_math.o
 	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/math.cu -shared -Xcompiler -fPIC -o .libs/math.o
-	$(NVCC)  -shared -Xcompiler -fPIC  -Xarchive -Wl,-soname  -Xarchive -Wl,bs_matrix.so .libs/bs_matrix.o .libs/bs_util.o .libs/bs_math.o .libs/math.o  -o .libs/bs_matrix.so -lcublas
+	$(NVCC)  -shared -Xcompiler -fPIC  -Xarchive -Wl,-soname  -Xarchive -Wl,bs_matrix.so .libs/dev_util_c.o .libs/dev_util_p.o .libs/bs_matrix.o .libs/bs_util.o .libs/bs_math.o .libs/math.o  -o .libs/bs_matrix.so -lcublas
 	cp ./.libs/bs_matrix.so $(phplibdir)/bs_matrix.so
 	cp ./.libs/bs_matrix.so $(EXTENSION_DIR)/bs_matrix.so
 temp: 
