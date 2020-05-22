@@ -2,6 +2,7 @@
 bs_matrix:
 	rm ./.libs -rf
 	mkdir ./.libs
+	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/dev_util_c.cpp -shared -Xcompiler -fPIC -o .libs/dev_util_c.o
 	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/bs_matrix.cpp -shared -Xcompiler -fPIC -o .libs/bs_matrix.o
 	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/bs_util.cpp -shared -Xcompiler -fPIC -o .libs/bs_util.o
 	$(NVCC) -I. -I$(builddir) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  $(ALL_CCFLAGS) $(GENCODE_FLAGS)  -c $(builddir)/bs_math.cpp -shared -Xcompiler -fPIC -o .libs/bs_math.o
