@@ -35,6 +35,8 @@
 #include "php.h"
 #include <zend_exceptions.h>
 #include "ext/standard/info.h"
+
+#include <dev_util_c.h>
 #include "php_bs_matrix.h"
 #include "php_bs_util.h"
 #include "php_bs_math.h"
@@ -191,7 +193,7 @@ PHP_METHOD(BLAS, __construct){
     int deviceCount = 0;
     cudaGetDeviceCount(&deviceCount);
     if (deviceCount == 0) {
-        zend_throw_exception_ex(NULL, 1000, "There are no available device(s) that support CUDA \n" );
+        zend_throw_exception_ex(NULL, 1000, duc_getErrorMsg(1000), NULL );
     }
 
     //-----------------
@@ -281,14 +283,14 @@ PHP_METHOD(BLAS, multiply){
 
     HashTable * hashTableAP = Z_ARRVAL_P(matrixAP);
     if( Z_TYPE( (hashTableAP->arData)->val ) != IS_ARRAY ){
-        zend_throw_exception_ex(NULL, 2001, "matrixArrA must be two dimension array" );
+        zend_throw_exception_ex(NULL, 2001, duc_getErrorMsg(2001), NULL );
     }
     int heightA = zend_hash_num_elements(hashTableAP);
     int widthA = zend_hash_num_elements( Z_ARRVAL( (hashTableAP->arData)->val ) );
 
     HashTable * hashTableBP = Z_ARRVAL_P(matrixBP);
     if( Z_TYPE( (hashTableBP->arData)->val ) != IS_ARRAY ){
-        zend_throw_exception_ex(NULL, 2002, "matrixArrB must be two dimension array" );
+        zend_throw_exception_ex(NULL, 2002, duc_getErrorMsg(2002), NULL );
     }
     int heightB = zend_hash_num_elements(hashTableBP);
     int widthB = zend_hash_num_elements( Z_ARRVAL( (hashTableBP->arData)->val ) );
@@ -299,23 +301,23 @@ PHP_METHOD(BLAS, multiply){
     if( matrixCP != NULL ){
         hashTableCP = Z_ARRVAL_P(matrixCP);
         if( Z_TYPE( (hashTableCP->arData)->val ) != IS_ARRAY ){
-            zend_throw_exception_ex(NULL, 2003, "matrixArrC must be two dimension array" );
+            zend_throw_exception_ex(NULL, 2003, duc_getErrorMsg(2003), NULL );
         }
         heightC = zend_hash_num_elements(hashTableCP);
         widthC = zend_hash_num_elements( Z_ARRVAL( (hashTableCP->arData)->val ) );
 
         if( heightC != heightA ){
-            zend_throw_exception_ex(NULL, 2004, "the height of martrixA( %d, %d ) can not match with the height of matrixC( %d, %d )", heightA, widthA, heightC, widthC );
+            zend_throw_exception_ex(NULL, 2004, duc_getErrorMsg(2004), heightA, widthA, heightC, widthC );
         }
 
         if( widthC != widthB ){
-            zend_throw_exception_ex(NULL, 2006, "the width of martrixB( %d, %d ) can not match with the width of widthC( %d, %d )", heightB, widthB, heightC, widthC  );
+            zend_throw_exception_ex(NULL, 2006, duc_getErrorMsg(2006), heightB, widthB, heightC, widthC  );
         }
 
     }
 
     if( widthA !=  heightB ){
-        zend_throw_exception_ex(NULL, 2000, "the width of martrixA( %d, %d ) can not match with the height of matrixB( %d, %d )", heightA, widthA, heightB, widthB );
+        zend_throw_exception_ex(NULL, 2000, duc_getErrorMsg(2000), heightA, widthA, heightB, widthB );
     }
 
     double * hostAP = ( double * )malloc( heightA * widthA * sizeof(double) );
@@ -435,14 +437,14 @@ PHP_METHOD(BLAS, multiplyS){
 
     HashTable * hashTableAP = Z_ARRVAL_P(matrixAP);
     if( Z_TYPE( (hashTableAP->arData)->val ) != IS_ARRAY ){
-        zend_throw_exception_ex(NULL, 2001, "matrixArrA must be two dimension array" );
+        zend_throw_exception_ex(NULL, 2001, duc_getErrorMsg(2001), NULL );
     }
     int heightA = zend_hash_num_elements(hashTableAP);
     int widthA = zend_hash_num_elements( Z_ARRVAL( (hashTableAP->arData)->val ) );
 
     HashTable * hashTableBP = Z_ARRVAL_P(matrixBP);
     if( Z_TYPE( (hashTableBP->arData)->val ) != IS_ARRAY ){
-        zend_throw_exception_ex(NULL, 2002, "matrixArrB must be two dimension array" );
+        zend_throw_exception_ex(NULL, 2002,  duc_getErrorMsg(2002), NULL );
     }
     int heightB = zend_hash_num_elements(hashTableBP);
     int widthB = zend_hash_num_elements( Z_ARRVAL( (hashTableBP->arData)->val ) );
@@ -453,23 +455,23 @@ PHP_METHOD(BLAS, multiplyS){
     if( matrixCP != NULL ){
         hashTableCP = Z_ARRVAL_P(matrixCP);
         if( Z_TYPE( (hashTableCP->arData)->val ) != IS_ARRAY ){
-            zend_throw_exception_ex(NULL, 2003, "matrixArrC must be two dimension array" );
+            zend_throw_exception_ex(NULL, 2003, duc_getErrorMsg(2003), NULL );
         }
         heightC = zend_hash_num_elements(hashTableCP);
         widthC = zend_hash_num_elements( Z_ARRVAL( (hashTableCP->arData)->val ) );
 
         if( heightC != heightA ){
-            zend_throw_exception_ex(NULL, 2004, "the height of martrixA( %d, %d ) can not match with the height of matrixC( %d, %d )", heightA, widthA, heightC, widthC );
+            zend_throw_exception_ex(NULL, 2004,  duc_getErrorMsg(2004), heightA, widthA, heightC, widthC );
         }
 
         if( widthC != widthB ){
-            zend_throw_exception_ex(NULL, 2005, "the width of martrixB( %d, %d ) can not match with the width of widthC( %d, %d )", heightB, widthB, heightC, widthC  );
+            zend_throw_exception_ex(NULL, 2005, duc_getErrorMsg(2005), heightB, widthB, heightC, widthC  );
         }
 
     }
 
     if( widthA !=  heightB ){
-        zend_throw_exception_ex(NULL, 2000, "the width of martrixA( %d, %d ) can not match with the height of matrixB( %d, %d )", heightA, widthA, heightB, widthB );
+        zend_throw_exception_ex(NULL, 2000, duc_getErrorMsg(2000), heightA, widthA, heightB, widthB );
     }
 
     float * hostAP = ( float * )malloc( heightA * widthA * sizeof(float) );
@@ -1364,7 +1366,7 @@ PHP_METHOD(BLAS, gemv){
     int heightA = zend_hash_num_elements(hashTableAP);
 
     if( Z_TYPE( (hashTableAP->arData)->val ) != IS_ARRAY ){
-        zend_throw_exception_ex(NULL, 2006, "matrixArrA must be two dimension array" );
+        zend_throw_exception_ex(NULL, 2006, duc_getErrorMsg(2006), NULL );
     }
 
     int widthA = zend_hash_num_elements( Z_ARRVAL( (hashTableAP->arData)->val ) );
@@ -1386,7 +1388,7 @@ PHP_METHOD(BLAS, gemv){
     }
 
     if( elementNumX < 1 + ( heightA - 1 ) * fabs( (int)strideX ) ){
-        zend_throw_exception_ex( NULL, 2007, "elementNumX must greater or equal than ( elementNumX < 1 + ( heightA - 1 ) * fabs( (int)strideX ) ) " );
+        zend_throw_exception_ex( NULL, 2007, duc_getErrorMsg(2007), NULL );
     }
 
 
@@ -1506,7 +1508,7 @@ PHP_METHOD(BLAS, gemvS){
     int heightA = zend_hash_num_elements(hashTableAP);
 
     if( Z_TYPE( (hashTableAP->arData)->val ) != IS_ARRAY ){
-        zend_throw_exception_ex(NULL, 2006, "matrixArrA must be two dimension array" );
+        zend_throw_exception_ex(NULL, 2006, duc_getErrorMsg(2006), NULL );
     }
 
     int widthA = zend_hash_num_elements( Z_ARRVAL( (hashTableAP->arData)->val ) );
@@ -1528,7 +1530,7 @@ PHP_METHOD(BLAS, gemvS){
     }
 
     if( elementNumX < 1 + ( heightA - 1 ) * fabs( (int)strideX ) ){
-        zend_throw_exception_ex( NULL, 2007, "elementNumX must greater or equal than ( elementNumX < 1 + ( heightA - 1 ) * fabs( (int)strideX ) ) " );
+        zend_throw_exception_ex( NULL, 2007, duc_getErrorMsg(2007), NULL );
     }
 
 

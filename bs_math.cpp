@@ -37,6 +37,8 @@
 #include "math.cuh"
 #include "php_bs_math.h"
 
+#include <dev_util_c.h>
+
 
 
 
@@ -621,25 +623,28 @@ PHP_METHOD( Math, hadamardProduct ){
 
 //transpose()
 ZEND_BEGIN_ARG_INFO_EX( Math_transpose_ArgInfo, 0, 0, 1 )
-    ZEND_ARG_ARRAY_INFO( 1, arrAP, 0 )
+    ZEND_ARG_ARRAY_INFO( 1, matrixAP, 0 )
 ZEND_END_ARG_INFO()
 
 PHP_METHOD( Math, transpose ){
 
-    zval * arrAP = NULL;
+    zval * matrixAP = NULL;
 
     ZEND_PARSE_PARAMETERS_START( 1, 1 )
-        Z_PARAM_ARRAY_EX( arrAP, 0, 1 )
+        Z_PARAM_ARRAY_EX( matrixAP, 0, 1 )
     ZEND_PARSE_PARAMETERS_END();
 
-    HashTable * hashTableAP = Z_ARRVAL_P(arrAP);
+    HashTable * hashTableAP = Z_ARRVAL_P(matrixAP);
     zval oneDimensionZval; array_init( &oneDimensionZval );
     int * shapeInfo = ( int * )calloc( 10, sizeof(int) );
     int shapeInfoIndex = 0;
 
     hashTableTo1DZval( hashTableAP, oneDimensionZval, shapeInfo, &shapeInfoIndex );
 
-    //TODO dimension check
+    //
+    if( shapeInfo[0] < 1 || shapeInfo[1] < 1 || shapeInfo[2] != 0 ){
+        zend_throw_exception_ex(NULL, 2008, duc_getErrorMsg(2008), "matrixA" );
+    }
 
     //
     int elementNum = zend_hash_num_elements( Z_ARRVAL(oneDimensionZval) );
