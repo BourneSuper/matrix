@@ -197,6 +197,8 @@ PHP_METHOD( Math, arrayAdd ){
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
 
+    free(hostAP);
+
 }
 
 //subtractArray()
@@ -236,6 +238,8 @@ PHP_METHOD( Math, subtractArray ){
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+    free(hostAP);
 
 }
 
@@ -277,6 +281,8 @@ PHP_METHOD( Math, arrayMultiply ){
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
 
+    free(hostAP);
+
 }
 
 //divideArray()
@@ -316,6 +322,8 @@ PHP_METHOD( Math, divideArray ){
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+    free(hostAP);
 
 }
 
@@ -357,6 +365,8 @@ PHP_METHOD( Math, arrayPower ){
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
 
+    free(hostAP);
+
 }
 
 //arraySquareRoot()
@@ -393,6 +403,8 @@ PHP_METHOD( Math, arraySquareRoot ){
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+    free(hostAP);
 
 }
 
@@ -431,6 +443,8 @@ PHP_METHOD( Math, arrayCubeRoot ){
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
 
+    free(hostAP);
+
 }
 
 //logEArray()
@@ -467,6 +481,8 @@ PHP_METHOD( Math, logEArray ){
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+    free(hostAP);
 
 }
 
@@ -505,6 +521,8 @@ PHP_METHOD( Math, log2Array ){
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
 
+    free(hostAP);
+
 }
 
 //log10Array()
@@ -541,6 +559,8 @@ PHP_METHOD( Math, log10Array ){
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+    free(hostAP);
 
 }
 
@@ -594,6 +614,9 @@ PHP_METHOD( Math, hadamardProduct ){
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
 
+    free(hostAP);
+    free(hostBP);
+
 }
 
 //transpose()
@@ -633,6 +656,8 @@ PHP_METHOD( Math, transpose ){
 
     //
     RETVAL_ZVAL( &reshapedZval, 1, 1 );
+
+    free(hostAP);
 
 }
 
