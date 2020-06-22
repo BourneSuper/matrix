@@ -69,7 +69,7 @@ class BLAS{
      * @return array two dimension array within double type number
      * @throws \Exception
      */
-    public function multiply( $matrixArrA, $matrixArrB, $matrixArrC = [][], $alpha = 1.0, $beta = 0.0 ){}
+    public function multiply( $matrixArrA, $matrixArrB, $matrixArrC = [], $alpha = 1.0, $beta = 0.0 ){}
     
     /**
      * This function performs the matrix-matrix multiplication
@@ -86,7 +86,7 @@ class BLAS{
      * @return array two dimension array within <b>float</b> type number
      * @throws \Exception
      */
-    public function multiplyS( $matrixArrA, $matrixArrB, $matrixArrC = [][], $alpha = 1.0, $beta = 0.0 ){}
+    public function multiplyS( $matrixArrA, $matrixArrB, $matrixArrC = [], $alpha = 1.0, $beta = 0.0 ){}
     
     /**
      * This function computes the dot product of vectors $oneDimensionArrA and $oneDimensionArrB
@@ -298,14 +298,14 @@ class Math{
     public static function arrayMultiply( $arrA, $alpha){}
     
     /**
-     * $alpha subtract on each element of $arrA
+     * $alpha divide on each element of $arrA
      * @param double $alpha
      * @param array $arr 1 or more dimension array within double type number
      */
     public static function divideArray( $alpha, $arrA ){}
     
     /**
-     * multiply $alpaha on each element of $arrA.
+     * each element of $arrA on the power of $alpha.
      * @param array $arr 1 or more dimension array within double type number
      * @param double $alpha
      */
@@ -330,7 +330,7 @@ class Math{
     public static function logEArray( $arrA ){}
     
     /**
-     * calculate the base 3 logarithm of each element of $arrA.
+     * calculate the base 2 logarithm of each element of $arrA.
      * @param array $arr 1 or more dimension array within double type number
      */
     public static function log2Array( $arrA ){}
